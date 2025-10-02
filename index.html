@@ -639,6 +639,72 @@
         </div>
 
         <div id="stats-tab" class="tab-content">
+            <div style="background: #f8f9fa; padding: 15px; border-radius: 10px; margin-bottom: 15px;">
+                <div style="font-weight: 600; margin-bottom: 12px; text-align: center; font-size: 14px;">Data Backup</div>
+                <div style="display: flex; gap: 8px; margin-bottom: 15px;">
+                    <button onclick="
+                        try {
+                            const data = { players: players, games: games, exportDate: new Date().toISOString(), version: '1.0' };
+                            const dataStr = JSON.stringify(data, null, 2);
+                            const blob = new Blob([dataStr], { type: 'application/json' });
+                            const file = new File([blob], 'soccer-stats-backup-' + new Date().toISOString().split('T')[0] + '.json', { type: 'application/json' });
+                            
+                            if (navigator.share && navigator.canShare && navigator.canShare({ files: [file] })) {
+                                navigator.share({
+                                    files: [file],
+                                    title: 'Soccer Stats Backup',
+                                    text: 'Soccer stats data backup file'
+                                }).then(() => {
+                                    showNotification('Data exported successfully!');
+                                }).catch((err) => {
+                                    if (err.name !== 'AbortError') {
+                                        showNotification('Share cancelled', 'error');
+                                    }
+                                });
+                            } else {
+                                // Fallback: copy to clipboard
+                                navigator.clipboard.writeText(dataStr).then(() => {
+                                    showNotification('Data copied to clipboard! Paste into Notes app and save.');
+                                }).catch(() => {
+                                    alert('Export not supported. Data: ' + dataStr.substring(0, 100) + '... (Copy this text manually)');
+                                });
+                            }
+                        } catch(e) {
+                            console.error(e);
+                            showNotification('Export failed: ' + e.message, 'error');
+                        }
+                    " style="flex: 1; padding: 8px; background: #059669; color: white; border: none; border-radius: 5px; font-size: 11px; font-weight: 600; cursor: pointer;">Export Data</button>
+                    <button onclick="document.getElementById('importFile').click()" style="flex: 1; padding: 8px; background: #2563eb; color: white; border: none; border-radius: 5px; font-size: 11px; font-weight: 600; cursor: pointer;">Import Data</button>
+                </div>
+                <input type="file" id="importFile" accept=".json" style="display: none;" onchange="
+                    const file = event.target.files[0];
+                    if (!file) return;
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        try {
+                            const data = JSON.parse(e.target.result);
+                            if (data.players && data.games) {
+                                if (confirm('This will replace all current data. Continue?')) {
+                                    players = data.players;
+                                    games = data.games;
+                                    saveData();
+                                    displayPlayers();
+                                    displayStats();
+                                    showNotification('Data imported successfully!');
+                                }
+                            } else {
+                                showNotification('Invalid backup file', 'error');
+                            }
+                        } catch (error) {
+                            console.error('Import error:', error);
+                            showNotification('Error importing data', 'error');
+                        }
+                    };
+                    reader.readAsText(file);
+                    event.target.value = '';
+                ">
+            </div>
+            
             <div style="background: #f8f9fa; padding: 20px; border-radius: 10px; margin-bottom: 20px;">
                 <div style="font-weight: 600; margin-bottom: 15px; text-align: center; font-size: 16px;">Season Summary</div>
                 <div id="season-summary">No games played yet.</div>

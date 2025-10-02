@@ -1,0 +1,1354 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="Soccer Stats">
+    <title>Soccer Stats Tracker</title>
+    <style>
+        * { 
+            margin: 0; 
+            padding: 0; 
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+            -webkit-touch-callout: none;
+            -webkit-user-select: none;
+            user-select: none;
+        }
+        
+        body { 
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; 
+            background: linear-gradient(135deg, #6b7280 0%, #4b5563 100%); 
+            min-height: 100vh; 
+            padding: env(safe-area-inset-top, 10px) 10px env(safe-area-inset-bottom, 10px) 10px;
+            overflow-x: hidden;
+        }
+        
+        .container { 
+            max-width: 400px; 
+            margin: 0 auto; 
+            background: white; 
+            border-radius: 20px; 
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1); 
+            overflow: hidden;
+            min-height: calc(100vh - env(safe-area-inset-top, 20px) - env(safe-area-inset-bottom, 20px));
+        }
+        
+        .header { 
+            background: linear-gradient(135deg, #374151, #4b5563); 
+            color: white; 
+            padding: 15px; 
+            text-align: center;
+            padding-top: max(15px, env(safe-area-inset-top, 15px));
+        }
+        
+        .header h1 {
+            font-size: 18px;
+            margin-bottom: 3px;
+        }
+        
+        .header p {
+            font-size: 11px;
+            opacity: 0.9;
+        }
+        
+        .nav { 
+            display: flex; 
+            background: #f8f9fa; 
+            border-bottom: 1px solid #dee2e6;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        
+        .nav button { 
+            flex: 1; 
+            padding: 10px 8px; 
+            border: none; 
+            background: none; 
+            font-size: 12px; 
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        
+        .nav button:active {
+            background: #e9ecef;
+        }
+        
+        .nav button.active { 
+            background: #374151; 
+            color: white; 
+        }
+        
+        .tab-content { 
+            display: none; 
+            padding: 15px; 
+            max-height: calc(100vh - 200px);
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+        
+        .tab-content.active { 
+            display: block; 
+        }
+        
+        .add-player { 
+            display: flex; 
+            gap: 8px; 
+            margin-bottom: 15px; 
+        }
+        
+        .add-player input { 
+            flex: 1; 
+            padding: 10px; 
+            border: 1px solid #dee2e6; 
+            border-radius: 6px; 
+            font-size: 14px;
+            -webkit-appearance: none;
+            appearance: none;
+        }
+        
+        .add-player input:focus {
+            outline: none;
+            border-color: #6b7280;
+        }
+        
+        .add-player button { 
+            padding: 10px 16px; 
+            background: #374151; 
+            color: white; 
+            border: none; 
+            border-radius: 6px; 
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 600;
+            transition: all 0.2s ease;
+        }
+        
+        .add-player button:active {
+            background: #1f2937;
+            transform: scale(0.98);
+        }
+        
+        .player-list { 
+            display: grid; 
+            gap: 10px; 
+        }
+        
+        .player-item { 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            padding: 10px; 
+            background: #f8f9fa; 
+            border-radius: 6px;
+            min-height: 45px;
+        }
+        
+        .delete-btn { 
+            background: #dc2626; 
+            color: white; 
+            border: none; 
+            padding: 6px 12px; 
+            border-radius: 5px; 
+            cursor: pointer; 
+            font-size: 11px;
+            font-weight: 600;
+            transition: all 0.2s ease;
+        }
+        
+        .delete-btn:active {
+            background: #b91c1c;
+            transform: scale(0.95);
+        }
+        
+        .game-input { 
+            display: flex; 
+            flex-direction: column; 
+            gap: 10px; 
+            margin-bottom: 15px; 
+        }
+        
+        .game-input input { 
+            padding: 10px; 
+            border: 1px solid #dee2e6; 
+            border-radius: 6px; 
+            font-size: 14px;
+            -webkit-appearance: none;
+            appearance: none;
+        }
+        
+        .game-input input:focus {
+            outline: none;
+            border-color: #6b7280;
+        }
+        
+        .start-game-btn { 
+            width: 100%; 
+            padding: 12px; 
+            background: #4b5563; 
+            color: white; 
+            border: none; 
+            border-radius: 6px; 
+            font-size: 14px; 
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        
+        .start-game-btn:active {
+            background: #374151;
+            transform: scale(0.98);
+        }
+        
+        .game-active { 
+            display: none; 
+        }
+        
+        .game-active.show { 
+            display: block; 
+        }
+        
+        .half-tracker { 
+            text-align: center; 
+            margin-bottom: 15px; 
+            padding: 12px; 
+            background: #f3f4f6; 
+            border-radius: 6px; 
+            border: 1px solid #d1d5db; 
+        }
+        
+        .half-tracker > div:first-child {
+            margin-bottom: 10px;
+            font-weight: 600;
+            font-size: 13px;
+        }
+        
+        .half-btn { 
+            padding: 8px 12px; 
+            margin: 0 3px; 
+            border: 1px solid #6b7280; 
+            background: white; 
+            border-radius: 5px; 
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 11px;
+            transition: all 0.2s ease;
+        }
+        
+        .half-btn:active {
+            transform: scale(0.95);
+        }
+        
+        .half-btn.active { 
+            background: #6b7280; 
+            color: white; 
+        }
+        
+        .undo-btn { 
+            width: 100%; 
+            padding: 8px; 
+            background: #6c757d; 
+            color: white; 
+            border: none; 
+            border-radius: 5px; 
+            font-size: 11px; 
+            cursor: not-allowed; 
+            margin-top: 10px; 
+            opacity: 0.7;
+            transition: all 0.2s ease;
+        }
+        
+        .undo-btn.active { 
+            background: #d97706; 
+            color: white; 
+            cursor: pointer; 
+            opacity: 1; 
+        }
+        
+        .undo-btn.active:active {
+            background: #b45309;
+            transform: scale(0.98);
+        }
+        
+        .selected-player { 
+            text-align: center; 
+            margin-bottom: 12px; 
+            padding: 10px; 
+            background: #f3f4f6; 
+            border-radius: 6px; 
+            min-height: 50px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            font-size: 13px;
+        }
+        
+        .player-buttons { 
+            display: grid; 
+            grid-template-columns: repeat(4, 1fr); 
+            gap: 6px; 
+            margin-bottom: 15px; 
+        }
+        
+        .player-btn { 
+            padding: 8px 4px; 
+            border: 1px solid #dee2e6; 
+            background: white; 
+            border-radius: 5px; 
+            cursor: pointer; 
+            font-size: 10px; 
+            text-align: center;
+            line-height: 1.1;
+            min-height: 38px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            transition: all 0.2s ease;
+        }
+        
+        .player-btn > div:first-child {
+            font-weight: 600;
+            font-size: 11px;
+        }
+        
+        .player-btn > div:last-child {
+            font-size: 9px;
+            margin-top: 2px;
+        }
+        
+        .player-btn:active {
+            transform: scale(0.95);
+            background: #f8f9fa;
+        }
+        
+        .player-btn.selected { 
+            background: #4b5563; 
+            color: white;
+            border-color: #4b5563;
+        }
+        
+        .stat-buttons { 
+            display: grid; 
+            grid-template-columns: repeat(4, 1fr); 
+            gap: 6px; 
+            margin-bottom: 15px; 
+        }
+        
+        .stat-btn { 
+            padding: 8px 4px; 
+            border: none; 
+            border-radius: 5px; 
+            font-size: 10px; 
+            font-weight: 600;
+            cursor: pointer; 
+            color: white; 
+            transition: all 0.3s ease;
+            min-height: 38px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            line-height: 1.1;
+        }
+        
+        .stat-btn:active {
+            transform: scale(0.95);
+        }
+        
+        .stat-btn.flash { 
+            background: #16a34a !important; 
+            transform: scale(1.1);
+            box-shadow: 0 4px 20px rgba(22, 163, 74, 0.4);
+        }
+        
+        .goals, .assists, .shot-on, .shot-off,
+        .steals, .pass-complete, .pass-incomplete, .turnover,
+        .clearance, .dribble-success, .dribble-miss, .blocks, .foul { 
+            background: #dc2626; 
+        }
+        
+        .save-catch, .save-punch, .goal-allowed { 
+            background: #6b7280; 
+        }
+        
+        .goalie-section { 
+            margin-top: 15px; 
+            padding: 12px; 
+            background: #f9fafb; 
+            border-radius: 6px; 
+            border: 1px solid #d1d5db; 
+        }
+        
+        .goalie-section > div:first-child {
+            text-align: center;
+            font-weight: 600;
+            color: #374151;
+            margin-bottom: 12px;
+            font-size: 13px;
+        }
+        
+        .finish-game-btn { 
+            width: 100%; 
+            padding: 12px; 
+            background: #4b5563; 
+            color: white; 
+            border: none; 
+            border-radius: 6px; 
+            margin-bottom: 12px; 
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 600;
+            transition: all 0.2s ease;
+        }
+        
+        .finish-game-btn:active {
+            background: #374151;
+            transform: scale(0.98);
+        }
+        
+        .final-score-form { 
+            display: none; 
+            background: #f8f9fa; 
+            padding: 15px; 
+            border-radius: 6px; 
+            margin-bottom: 12px; 
+        }
+        
+        .final-score-form h3 {
+            text-align: center;
+            margin-bottom: 15px;
+            font-size: 15px;
+        }
+        
+        .final-score-form.show { 
+            display: block; 
+        }
+        
+        .score-input-row { 
+            display: flex; 
+            gap: 10px; 
+            margin-bottom: 15px; 
+            align-items: center; 
+            justify-content: center; 
+        }
+        
+        .score-input-row input { 
+            width: 60px; 
+            padding: 10px; 
+            border: 1px solid #dee2e6; 
+            border-radius: 5px; 
+            text-align: center; 
+            font-size: 16px;
+            font-weight: 600;
+            -webkit-appearance: none;
+            appearance: none;
+        }
+        
+        .score-input-row input:focus {
+            outline: none;
+            border-color: #6b7280;
+        }
+        
+        .score-input-row label {
+            font-weight: 600;
+            font-size: 12px;
+        }
+        
+        .score-input-row span {
+            font-size: 20px;
+            font-weight: bold;
+        }
+        
+        .save-btn, .cancel-btn, .abandon-btn { 
+            flex: 1; 
+            padding: 10px; 
+            border: none; 
+            border-radius: 5px; 
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: 600;
+            transition: all 0.2s ease;
+        }
+        
+        .save-btn { 
+            background: #16a34a; 
+            color: white; 
+        }
+        
+        .save-btn:active {
+            background: #15803d;
+            transform: scale(0.98);
+        }
+        
+        .cancel-btn { 
+            background: #6c757d; 
+            color: white; 
+        }
+        
+        .cancel-btn:active {
+            background: #545b62;
+            transform: scale(0.98);
+        }
+        
+        .abandon-btn {
+            background: #dc2626;
+            color: white;
+        }
+        
+        .abandon-btn:active {
+            background: #b91c1c;
+            transform: scale(0.98);
+        }
+        
+        .button-row { 
+            display: flex; 
+            gap: 10px; 
+        }
+        
+        .delete-game-btn {
+            background: #dc2626; 
+            color: white; 
+            border: none; 
+            padding: 6px 12px; 
+            border-radius: 5px; 
+            font-size: 11px; 
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.2s ease;
+        }
+        
+        .delete-game-btn:active {
+            background: #b91c1c;
+            transform: scale(0.95);
+        }
+        
+        .notification {
+            position: fixed;
+            top: 50px;
+            left: 50%;
+            transform: translateX(-50%);
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-weight: 600;
+            z-index: 1000;
+            transition: all 0.3s ease;
+        }
+        
+        .notification.success {
+            background: #16a34a;
+            color: white;
+        }
+        
+        .notification.error {
+            background: #dc2626;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>⚽ Soccer Stats</h1>
+            <p>Kids Travel Team Tracker</p>
+        </div>
+
+        <div class="nav">
+            <button class="nav-btn active" onclick="showTab('roster')">Roster</button>
+            <button class="nav-btn" onclick="showTab('game')">Game</button>
+            <button class="nav-btn" onclick="showTab('stats')">Stats</button>
+            <button class="nav-btn" onclick="showTab('help')">Help</button>
+        </div>
+
+        <div id="roster-tab" class="tab-content active">
+            <div class="add-player">
+                <input type="text" id="player-name" placeholder="Player name" autocomplete="off">
+                <input type="number" id="jersey-number" placeholder="#" min="1" max="99" autocomplete="off">
+                <button onclick="addPlayer()">Add</button>
+            </div>
+            <div id="player-list" class="player-list"></div>
+        </div>
+
+        <div id="game-tab" class="tab-content">
+            <div class="game-setup" id="game-setup">
+                <div class="game-input">
+                    <input type="date" id="game-date" autocomplete="off">
+                    <input type="text" id="opponent" placeholder="Opponent team name" autocomplete="off">
+                </div>
+                <button class="start-game-btn" onclick="startGame()">Start Game</button>
+            </div>
+
+            <div id="game-active" class="game-active">
+                <div class="half-tracker">
+                    <div style="margin-bottom: 10px; font-weight: 600; font-size: 13px;">Game Period</div>
+                    <div style="display: flex; justify-content: center; gap: 8px; margin-bottom: 10px;">
+                        <button class="half-btn active" onclick="setHalf(1)">1st Half</button>
+                        <button class="half-btn" onclick="setHalf(2)">2nd Half</button>
+                    </div>
+                    <button class="undo-btn" id="undo-btn" onclick="undoLastAction()">↶ Subtract Mode - Click to activate</button>
+                </div>
+
+                <div class="selected-player" id="selected-player">
+                    <div style="font-size: 14px; color: #666;">Select a player below to start recording stats</div>
+                </div>
+                
+                <div class="player-selector">
+                    <div id="player-buttons" class="player-buttons"></div>
+                </div>
+
+                <div class="stat-buttons">
+                    <button class="stat-btn goals" onclick="addStat('goals')">Goals</button>
+                    <button class="stat-btn assists" onclick="addStat('assists')">Assists</button>
+                    <button class="stat-btn shot-on" onclick="addStat('shotOn')">Shot On</button>
+                    <button class="stat-btn shot-off" onclick="addStat('shotOff')">Shot Off</button>
+                    <button class="stat-btn steals" onclick="addStat('steals')">Steals</button>
+                    <button class="stat-btn pass-complete" onclick="addStat('passComplete')">Pass ✓</button>
+                    <button class="stat-btn pass-incomplete" onclick="addStat('passIncomplete')">Pass ✗</button>
+                    <button class="stat-btn turnover" onclick="addStat('turnover')">Turnover</button>
+                    <button class="stat-btn clearance" onclick="addStat('clearance')">Clearance</button>
+                    <button class="stat-btn dribble-success" onclick="addStat('dribbleSuccess')">Dribble ✓</button>
+                    <button class="stat-btn dribble-miss" onclick="addStat('dribbleMiss')">Dribble ✗</button>
+                    <button class="stat-btn blocks" onclick="addStat('blocks')">Blocks</button>
+                    <button class="stat-btn foul" onclick="addStat('foulCommitted')">Foul</button>
+                    <button class="stat-btn save-catch" onclick="addStat('saveCatch')">Save Catch</button>
+                    <button class="stat-btn save-punch" onclick="addStat('savePunch')">Save Punch</button>
+                    <button class="stat-btn goal-allowed" onclick="addStat('goalAllowed')">Goal Allow</button>
+                </div>
+
+                <button class="finish-game-btn" onclick="showFinalScore()">Finish Game & Enter Score</button>
+                
+                <div id="final-score-form" class="final-score-form">
+                    <h3 style="text-align: center; margin-bottom: 20px; font-size: 18px;">Final Score</h3>
+                    <div class="score-input-row">
+                        <label style="font-weight: 600; font-size: 14px;">Our Team</label>
+                        <input type="number" id="final-our-score" min="0" value="0" autocomplete="off">
+                        <span style="font-size: 24px; font-weight: bold;">-</span>
+                        <input type="number" id="final-their-score" min="0" value="0" autocomplete="off">
+                        <label id="opponent-label" style="font-weight: 600; font-size: 14px;">Opponent</label>
+                    </div>
+                    <div class="button-row">
+                        <button class="save-btn" onclick="saveGame()">Save Game</button>
+                        <button class="cancel-btn" onclick="cancelFinish()">Cancel</button>
+                        <button class="abandon-btn" onclick="abandonGame()">Abandon Game</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="stats-tab" class="tab-content">
+            <div style="background: #f8f9fa; padding: 20px; border-radius: 10px; margin-bottom: 20px;">
+                <div style="font-weight: 600; margin-bottom: 15px; text-align: center; font-size: 16px;">Season Summary</div>
+                <div id="season-summary">No games played yet.</div>
+            </div>
+            <div>
+                <h3 style="margin-bottom: 15px;">Game History</h3>
+                <div id="game-history">No games recorded yet.</div>
+            </div>
+        </div>
+
+        <div id="help-tab" class="tab-content">
+            <div style="background: #f8f9fa; padding: 15px; border-radius: 10px;">
+                <h2 style="text-align: center; color: #374151; margin-bottom: 20px; font-size: 15px;">📖 Stats Guide</h2>
+                
+                <div style="margin-bottom: 15px;">
+                    <h3 style="color: #4b5563; margin-bottom: 8px; font-size: 12px;">⚽ Offensive Stats</h3>
+                    <div style="background: white; padding: 8px; margin: 6px 0; border-radius: 6px; border-left: 3px solid #4b5563; font-size: 11px;"><strong>Goals (G)</strong> - Ball crosses goal line</div>
+                    <div style="background: white; padding: 8px; margin: 6px 0; border-radius: 6px; border-left: 3px solid #4b5563; font-size: 11px;"><strong>Assists (A)</strong> - Final pass leading to goal</div>
+                    <div style="background: white; padding: 8px; margin: 6px 0; border-radius: 6px; border-left: 3px solid #4b5563; font-size: 11px;"><strong>Shot On (SO)</strong> - Shot on target</div>
+                    <div style="background: white; padding: 8px; margin: 6px 0; border-radius: 6px; border-left: 3px solid #4b5563; font-size: 11px;"><strong>Shot Off (SF)</strong> - Shot off target</div>
+                </div>
+                
+                <div style="margin-bottom: 15px;">
+                    <h3 style="color: #059669; margin-bottom: 8px; font-size: 12px;">⚡ Passing & Dribbling</h3>
+                    <div style="background: white; padding: 8px; margin: 6px 0; border-radius: 6px; border-left: 3px solid #059669; font-size: 11px;"><strong>Pass Complete (P✓)</strong> - Successful pass</div>
+                    <div style="background: white; padding: 8px; margin: 6px 0; border-radius: 6px; border-left: 3px solid #059669; font-size: 11px;"><strong>Pass Incomplete (P✗)</strong> - Unsuccessful pass</div>
+                    <div style="background: white; padding: 8px; margin: 6px 0; border-radius: 6px; border-left: 3px solid #059669; font-size: 11px;"><strong>Dribble Success (D✓)</strong> - Successful dribble</div>
+                    <div style="background: white; padding: 8px; margin: 6px 0; border-radius: 6px; border-left: 3px solid #059669; font-size: 11px;"><strong>Dribble Miss (D✗)</strong> - Unsuccessful dribble</div>
+                </div>
+                
+                <div style="margin-bottom: 15px;">
+                    <h3 style="color: #6b7280; margin-bottom: 8px; font-size: 12px;">🛡️ Defensive Stats</h3>
+                    <div style="background: white; padding: 8px; margin: 6px 0; border-radius: 6px; border-left: 3px solid #6b7280; font-size: 11px;"><strong>Steals (ST)</strong> - Taking ball from opponent</div>
+                    <div style="background: white; padding: 8px; margin: 6px 0; border-radius: 6px; border-left: 3px solid #6b7280; font-size: 11px;"><strong>Clearance (CL)</strong> - Kicking ball from danger</div>
+                    <div style="background: white; padding: 8px; margin: 6px 0; border-radius: 6px; border-left: 3px solid #6b7280; font-size: 11px;"><strong>Blocks (BL)</strong> - Blocking opponent's shot</div>
+                    <div style="background: white; padding: 8px; margin: 6px 0; border-radius: 6px; border-left: 3px solid #6b7280; font-size: 11px;"><strong>Turnover (TO)</strong> - Losing possession</div>
+                    <div style="background: white; padding: 8px; margin: 6px 0; border-radius: 6px; border-left: 3px solid #6b7280; font-size: 11px;"><strong>Foul (F)</strong> - Illegal contact</div>
+                </div>
+                
+                <div style="margin-bottom: 15px;">
+                    <h3 style="color: #374151; margin-bottom: 8px; font-size: 12px;">🥅 Goalkeeper Stats</h3>
+                    <div style="background: white; padding: 8px; margin: 6px 0; border-radius: 6px; border-left: 3px solid #374151; font-size: 11px;"><strong>Save-Catch (SC)</strong> - Catching ball cleanly</div>
+                    <div style="background: white; padding: 8px; margin: 6px 0; border-radius: 6px; border-left: 3px solid #374151; font-size: 11px;"><strong>Save-Punch (SP)</strong> - Punching ball away</div>
+                    <div style="background: white; padding: 8px; margin: 6px 0; border-radius: 6px; border-left: 3px solid #374151; font-size: 11px;"><strong>Goal Allowed (GA)</strong> - Ball goes in past keeper</div>
+                </div>
+                
+                <div style="background: #f3f4f6; padding: 12px; border-radius: 6px; border-left: 3px solid #6b7280;">
+                    <h4 style="color: #374151; margin-bottom: 8px; font-size: 11px;">💡 Tips:</h4>
+                    <ul style="color: #4b5563; padding-left: 18px; line-height: 1.4; font-size: 10px;">
+                        <li>Use half buttons to track game period</li>
+                        <li>Toggle subtract mode to remove stats</li>
+                        <li>Visual feedback shows recorded stats</li>
+                        <li>Add to home screen for app-like experience</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Initialize with clean data
+        let players = [];
+        let games = [];
+        let currentGame = null;
+        let selectedPlayer = null;
+        let currentHalf = 1;
+        let lastAction = null;
+        let subtractMode = false; // New variable to track subtract mode
+
+        document.addEventListener('DOMContentLoaded', function() {
+            loadData(); 
+            displayPlayers(); 
+            setTodaysDate();
+            
+            // Prevent zoom on input focus for iOS
+            document.querySelectorAll('input').forEach(input => {
+                input.addEventListener('focus', function() {
+                    this.style.fontSize = '16px';
+                });
+            });
+            
+            // Add haptic feedback simulation
+            document.querySelectorAll('button').forEach(button => {
+                button.addEventListener('touchstart', function() {
+                    if (navigator.vibrate) {
+                        navigator.vibrate(10);
+                    }
+                });
+            });
+        });
+
+        function showNotification(message, type = 'success') {
+            const notification = document.createElement('div');
+            notification.className = `notification ${type}`;
+            notification.textContent = message;
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.remove();
+            }, 3000);
+        }
+
+        function loadData() {
+            try {
+                const p = localStorage.getItem('soccerPlayers');
+                const g = localStorage.getItem('soccerGames');
+                
+                if (p) {
+                    const parsedPlayers = JSON.parse(p);
+                    if (Array.isArray(parsedPlayers)) {
+                        players = parsedPlayers;
+                    }
+                }
+                
+                if (g) {
+                    const parsedGames = JSON.parse(g);
+                    if (Array.isArray(parsedGames)) {
+                        games = parsedGames;
+                    }
+                }
+                
+                console.log('Data loaded successfully - Players:', players.length, 'Games:', games.length);
+            } catch (e) { 
+                console.error('Error loading data:', e); 
+                players = [];
+                games = [];
+                showNotification('Starting fresh - no saved data found', 'error');
+            }
+        }
+
+        function saveData() {
+            try {
+                localStorage.setItem('soccerPlayers', JSON.stringify(players));
+                localStorage.setItem('soccerGames', JSON.stringify(games));
+            } catch (e) { 
+                console.error('Error saving data:', e); 
+                showNotification('Error saving data', 'error');
+            }
+        }
+
+        function setTodaysDate() {
+            const today = new Date();
+            const dateString = today.getFullYear() + '-' + 
+                String(today.getMonth() + 1).padStart(2, '0') + '-' + 
+                String(today.getDate()).padStart(2, '0');
+            document.getElementById('game-date').value = dateString;
+        }
+
+        function showTab(tabName) {
+            document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+            document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+            document.getElementById(tabName + '-tab').classList.add('active');
+            
+            if (tabName === 'roster') {
+                displayPlayers(); 
+            } else if (tabName === 'stats') {
+                displayStats();
+            }
+        }
+
+        function addPlayer() {
+            const name = document.getElementById('player-name').value.trim();
+            const jersey = parseInt(document.getElementById('jersey-number').value);
+            
+            if (!name || !jersey) { 
+                showNotification('Please enter both name and jersey number', 'error');
+                return; 
+            }
+            
+            if (players.find(p => p.jersey === jersey)) { 
+                showNotification('Jersey number already exists', 'error');
+                return; 
+            }
+            
+            players.push({ id: Date.now(), name: name, jersey: jersey });
+            document.getElementById('player-name').value = ''; 
+            document.getElementById('jersey-number').value = '';
+            saveData(); 
+            displayPlayers();
+            showNotification(`Player ${name} added successfully!`);
+        }
+
+        function deletePlayer(playerId) {
+            const playerName = players.find(p => p.id === playerId)?.name;
+            players = players.filter(p => p.id !== playerId);
+            saveData();
+            displayPlayers();
+            showNotification(`Player ${playerName} deleted successfully!`);
+        }
+
+        function displayPlayers() {
+            const list = document.getElementById('player-list'); 
+            list.innerHTML = '';
+            
+            if (players.length === 0) {
+                list.innerHTML = '<div style="text-align: center; color: #666; padding: 20px;">No players added yet</div>';
+                return;
+            }
+            
+            players.sort((a, b) => a.jersey - b.jersey).forEach(player => {
+                const item = document.createElement('div'); 
+                item.className = 'player-item';
+                item.innerHTML = `
+                    <div style="font-weight: 600;">#${player.jersey} ${player.name}</div>
+                    <button class="delete-btn" onclick="deletePlayer(${player.id})">Delete</button>
+                `;
+                list.appendChild(item);
+            });
+        }
+
+        function startGame() {
+            const date = document.getElementById('game-date').value;
+            const opponent = document.getElementById('opponent').value.trim();
+            
+            if (!date) { 
+                showNotification('Please select date', 'error');
+                return; 
+            }
+            
+            if (!opponent) { 
+                showNotification('Please enter opponent name', 'error');
+                return; 
+            }
+            
+            if (players.length === 0) { 
+                showNotification('Please add players first', 'error');
+                return; 
+            }
+            
+            currentGame = { 
+                id: Date.now(), 
+                date: date, 
+                opponent: opponent, 
+                ourScore: null, 
+                theirScore: null, 
+                playerStats: {} 
+            };
+            
+            lastAction = null;
+            subtractMode = false; // Reset subtract mode when starting new game
+            
+            players.forEach(player => {
+                currentGame.playerStats[player.id] = { 
+                    goals: 0, assists: 0, shotOn: 0, shotOff: 0, steals: 0, 
+                    passComplete: 0, passIncomplete: 0, turnover: 0, clearance: 0, 
+                    dribbleSuccess: 0, dribbleMiss: 0, blocks: 0, foulCommitted: 0, 
+                    saveCatch: 0, savePunch: 0, goalAllowed: 0 
+                };
+            });
+            
+            document.getElementById('game-setup').style.display = 'none';
+            document.getElementById('game-active').classList.add('show');
+            currentHalf = 1; 
+            setHalf(1); 
+            setupPlayerButtons(); 
+            updateUndoButton();
+            showNotification('Game started!');
+        }
+
+        function setupPlayerButtons() {
+            const container = document.getElementById('player-buttons'); 
+            container.innerHTML = '';
+            
+            players.sort((a, b) => a.jersey - b.jersey).forEach(player => {
+                const btn = document.createElement('button'); 
+                btn.className = 'player-btn';
+                btn.innerHTML = `<div style="font-weight: 600; font-size: 14px;">#${player.jersey}</div><div style="font-size: 11px; margin-top: 4px;">${player.name}</div>`;
+                btn.onclick = () => selectPlayer(player.id);
+                container.appendChild(btn);
+            });
+        }
+
+        function selectPlayer(playerId) {
+            selectedPlayer = playerId;
+            document.querySelectorAll('.player-btn').forEach(btn => btn.classList.remove('selected'));
+            
+            const player = players.find(p => p.id === playerId);
+            const playerBtn = Array.from(document.querySelectorAll('.player-btn')).find(btn => 
+                btn.innerHTML.includes(`#${player.jersey}`)
+            );
+            if (playerBtn) playerBtn.classList.add('selected');
+            
+            const stats = currentGame.playerStats[playerId];
+            const totalStats = Object.values(stats).reduce((sum, val) => sum + val, 0);
+            
+            document.getElementById('selected-player').innerHTML = `
+                <div style="font-size: 16px; font-weight: 600;">Selected: #${player.jersey} ${player.name}</div>
+                <div style="font-size: 12px; color: #666; margin-top: 5px;">Current game: ${totalStats} actions recorded</div>
+            `;
+        }
+
+        function setHalf(half) {
+            currentHalf = half;
+            document.querySelectorAll('.half-btn').forEach((btn, index) => {
+                btn.classList.remove('active'); 
+                if (index === half - 1) btn.classList.add('active');
+            });
+        }
+
+        function addStat(statType) {
+            if (!selectedPlayer) { 
+                showNotification('Please select a player first', 'error');
+                return; 
+            }
+            
+            const player = players.find(p => p.id === selectedPlayer);
+            const targetButton = event.target;
+            
+            // Store the original text before modifying
+            if (!targetButton.hasAttribute('data-original-text')) {
+                targetButton.setAttribute('data-original-text', targetButton.textContent);
+            }
+            const originalText = targetButton.getAttribute('data-original-text');
+            
+            // Check if in subtract mode
+            if (subtractMode) {
+                // Subtract mode - remove 1 from stat
+                if (currentGame.playerStats[selectedPlayer][statType] <= 0) {
+                    showNotification('Cannot subtract - stat is already at 0', 'error');
+                    return;
+                }
+                
+                currentGame.playerStats[selectedPlayer][statType]--;
+                const statCount = currentGame.playerStats[selectedPlayer][statType];
+                
+                targetButton.textContent = `- ${statCount} (${currentHalf}H)`;
+                targetButton.classList.add('flash');
+                
+                const totalStats = Object.values(currentGame.playerStats[selectedPlayer]).reduce((sum, val) => sum + val, 0);
+                document.getElementById('selected-player').innerHTML = `
+                    <div style="font-size: 16px; font-weight: 600;">Selected: #${player.jersey} ${player.name}</div>
+                    <div style="color: #dc2626; font-weight: bold;">- ${originalText} removed! (${statCount} remaining)</div>
+                `;
+                
+                setTimeout(() => {
+                    targetButton.textContent = originalText; 
+                    targetButton.classList.remove('flash');
+                    document.getElementById('selected-player').innerHTML = `
+                        <div style="font-size: 16px; font-weight: 600;">Selected: #${player.jersey} ${player.name}</div>
+                        <div style="font-size: 12px; color: #666; margin-top: 5px;">Current game: ${totalStats} actions recorded</div>
+                    `;
+                }, 2000);
+                
+            } else {
+                // Normal add mode
+                currentGame.playerStats[selectedPlayer][statType]++;
+                const statCount = currentGame.playerStats[selectedPlayer][statType];
+                
+                targetButton.textContent = `✓ ${statCount} (${currentHalf}H)`;
+                targetButton.classList.add('flash');
+                
+                const totalStats = Object.values(currentGame.playerStats[selectedPlayer]).reduce((sum, val) => sum + val, 0);
+                document.getElementById('selected-player').innerHTML = `
+                    <div style="font-size: 16px; font-weight: 600;">Selected: #${player.jersey} ${player.name}</div>
+                    <div style="color: #16a34a; font-weight: bold;">✓ ${originalText} recorded! (${statCount} total)</div>
+                `;
+                
+                setTimeout(() => {
+                    targetButton.textContent = originalText; 
+                    targetButton.classList.remove('flash');
+                    document.getElementById('selected-player').innerHTML = `
+                        <div style="font-size: 16px; font-weight: 600;">Selected: #${player.jersey} ${player.name}</div>
+                        <div style="font-size: 12px; color: #666; margin-top: 5px;">Current game: ${totalStats} actions recorded</div>
+                    `;
+                }, 2000);
+            }
+        }
+
+        function undoLastAction() {
+            // Toggle subtract mode
+            subtractMode = !subtractMode;
+            updateUndoButton();
+            
+            if (subtractMode) {
+                showNotification('Subtract mode activated - click stats to remove');
+            } else {
+                showNotification('Normal mode - click stats to add');
+            }
+        }
+
+        function updateUndoButton() {
+            const undoBtn = document.getElementById('undo-btn');
+            if (subtractMode) {
+                undoBtn.classList.add('active'); 
+                undoBtn.innerHTML = '↶ Subtract Mode ON - Click to turn OFF';
+            } else { 
+                undoBtn.classList.remove('active'); 
+                undoBtn.innerHTML = '↶ Subtract Mode - Click to activate'; 
+            }
+        }
+
+        function showFinalScore() {
+            document.getElementById('opponent-label').textContent = currentGame.opponent;
+            document.getElementById('final-score-form').classList.add('show');
+        }
+
+        function cancelFinish() { 
+            document.getElementById('final-score-form').classList.remove('show'); 
+        }
+
+        function abandonGame() {
+            document.getElementById('final-score-form').style.display = 'none';
+            document.getElementById('game-active').style.display = 'none';
+            document.getElementById('game-setup').style.display = 'block';
+            currentGame = null;
+            selectedPlayer = null;
+            showNotification('Game abandoned successfully!');
+        }
+
+        function saveGame() {
+            const ourScore = parseInt(document.getElementById('final-our-score').value);
+            const theirScore = parseInt(document.getElementById('final-their-score').value);
+            
+            if (isNaN(ourScore) || isNaN(theirScore) || ourScore < 0 || theirScore < 0) { 
+                showNotification('Please enter valid scores', 'error');
+                return; 
+            }
+            
+            currentGame.ourScore = ourScore; 
+            currentGame.theirScore = theirScore; 
+            games.push(currentGame); 
+            saveData(); 
+            resetGameState(); 
+            showNotification('Game saved successfully!');
+        }
+
+        function resetGameState() {
+            currentGame = null; 
+            selectedPlayer = null; 
+            currentHalf = 1; 
+            lastAction = null;
+            document.getElementById('game-setup').style.display = 'block'; 
+            document.getElementById('game-active').style.display = 'none';
+            document.getElementById('final-score-form').style.display = 'none'; 
+            document.getElementById('opponent').value = '';
+            document.getElementById('final-our-score').value = '0'; 
+            document.getElementById('final-their-score').value = '0'; 
+            setTodaysDate();
+        }
+
+        function deleteGame(gameId) {
+            games = games.filter(g => g.id !== gameId);
+            saveData();
+            displayStats();
+            showNotification('Game deleted successfully!');
+        }
+
+        function displayStats() { 
+            displaySeasonSummary(); 
+            displayGameHistory(); 
+        }
+
+        function displaySeasonSummary() {
+            const summaryDiv = document.getElementById('season-summary');
+            
+            if (games.length === 0) { 
+                summaryDiv.innerHTML = 'No games played yet.'; 
+                return; 
+            }
+            
+            let wins = 0, losses = 0, ties = 0, totalGoals = 0, totalAllowed = 0;
+            
+            // Calculate team stats
+            for (let i = 0; i < games.length; i++) {
+                const game = games[i];
+                if (game && typeof game.ourScore === 'number' && typeof game.theirScore === 'number') {
+                    if (game.ourScore > game.theirScore) wins++;
+                    else if (game.ourScore < game.theirScore) losses++;
+                    else ties++;
+                    
+                    totalGoals += game.ourScore;
+                    totalAllowed += game.theirScore;
+                }
+            }
+            
+            // Calculate player stats across all games
+            const playerTotals = {};
+            
+            // Initialize player totals
+            players.forEach(player => {
+                playerTotals[player.id] = {
+                    player: player,
+                    goals: 0, assists: 0, shotOn: 0, shotOff: 0, steals: 0,
+                    passComplete: 0, passIncomplete: 0, turnover: 0, clearance: 0,
+                    dribbleSuccess: 0, dribbleMiss: 0, blocks: 0, foulCommitted: 0,
+                    saveCatch: 0, savePunch: 0, goalAllowed: 0, gamesPlayed: 0
+                };
+            });
+            
+            // Sum up stats from all games
+            games.forEach(game => {
+                if (game && game.playerStats) {
+                    for (let playerId in game.playerStats) {
+                        if (playerTotals[playerId]) {
+                            const gameStats = game.playerStats[playerId];
+                            const totals = playerTotals[playerId];
+                            
+                            // Check if player had any activity in this game
+                            let hasActivity = false;
+                            for (let stat in gameStats) {
+                                if (gameStats[stat] > 0) {
+                                    totals[stat] += gameStats[stat];
+                                    hasActivity = true;
+                                }
+                            }
+                            
+                            if (hasActivity) {
+                                totals.gamesPlayed++;
+                            }
+                        }
+                    }
+                }
+            });
+            
+            // Sort players by goals + assists (top performers first)
+            const sortedPlayers = Object.values(playerTotals)
+                .filter(p => p.gamesPlayed > 0)
+                .sort((a, b) => (b.goals + b.assists) - (a.goals + a.assists));
+            
+            let playerStatsHtml = '';
+            if (sortedPlayers.length > 0) {
+                playerStatsHtml = `
+                    <div style="background: white; padding: 15px; border-radius: 8px; margin-top: 15px;">
+                        <div style="font-weight: 600; margin-bottom: 15px; text-align: center; font-size: 14px;">Season Player Stats</div>
+                        <div style="max-height: 400px; overflow-y: auto;">
+                            ${sortedPlayers.map(p => {
+                                const allStats = [];
+                                
+                                // Offensive stats
+                                if (p.goals > 0) allStats.push(`${p.goals}G`);
+                                if (p.assists > 0) allStats.push(`${p.assists}A`);
+                                if (p.shotOn > 0) allStats.push(`${p.shotOn}SO`);
+                                if (p.shotOff > 0) allStats.push(`${p.shotOff}SF`);
+                                
+                                // Passing stats
+                                if (p.passComplete > 0) allStats.push(`${p.passComplete}P✓`);
+                                if (p.passIncomplete > 0) allStats.push(`${p.passIncomplete}P✗`);
+                                
+                                // Dribbling stats
+                                if (p.dribbleSuccess > 0) allStats.push(`${p.dribbleSuccess}D✓`);
+                                if (p.dribbleMiss > 0) allStats.push(`${p.dribbleMiss}D✗`);
+                                
+                                // Defensive stats
+                                if (p.steals > 0) allStats.push(`${p.steals}ST`);
+                                if (p.clearance > 0) allStats.push(`${p.clearance}CL`);
+                                if (p.blocks > 0) allStats.push(`${p.blocks}BL`);
+                                if (p.turnover > 0) allStats.push(`${p.turnover}TO`);
+                                if (p.foulCommitted > 0) allStats.push(`${p.foulCommitted}F`);
+                                
+                                // Goalkeeper stats
+                                if (p.saveCatch > 0) allStats.push(`${p.saveCatch}SC`);
+                                if (p.savePunch > 0) allStats.push(`${p.savePunch}SP`);
+                                if (p.goalAllowed > 0) allStats.push(`${p.goalAllowed}GA`);
+                                
+                                const statsDisplay = allStats.length > 0 ? allStats.join(', ') : 'No stats recorded';
+                                
+                                return `
+                                    <div style="padding: 10px 0; border-bottom: 1px solid #f0f0f0;">
+                                        <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+                                            <div>
+                                                <div style="font-weight: 600; font-size: 13px;">#${p.player.jersey} ${p.player.name}</div>
+                                                <div style="font-size: 11px; color: #666; margin-top: 2px;">${p.gamesPlayed} games played</div>
+                                            </div>
+                                        </div>
+                                        <div style="font-size: 11px; color: #666; margin-top: 5px; line-height: 1.4;">
+                                            ${statsDisplay}
+                                        </div>
+                                    </div>
+                                `;
+                            }).join('')}
+                        </div>
+                    </div>
+                `;
+            } else {
+                playerStatsHtml = `
+                    <div style="background: white; padding: 15px; border-radius: 8px; margin-top: 15px; text-align: center; color: #666; font-size: 12px;">
+                        No player stats recorded yet
+                    </div>
+                `;
+            }
+            
+            summaryDiv.innerHTML = `
+                <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; text-align: center;">
+                    <div style="background: white; padding: 15px; border-radius: 8px;">
+                        <div style="font-size: 24px; font-weight: bold; color: #374151;">${games.length}</div>
+                        <div style="font-size: 12px; color: #666;">Games Played</div>
+                    </div>
+                    <div style="background: white; padding: 15px; border-radius: 8px;">
+                        <div style="font-size: 16px; font-weight: bold; color: #4b5563;">${wins}-${losses}-${ties}</div>
+                        <div style="font-size: 12px; color: #666;">Record</div>
+                    </div>
+                    <div style="background: white; padding: 15px; border-radius: 8px;">
+                        <div style="font-size: 20px; font-weight: bold; color: #dc2626;">${totalGoals}</div>
+                        <div style="font-size: 12px; color: #666;">Goals For</div>
+                    </div>
+                    <div style="background: white; padding: 15px; border-radius: 8px;">
+                        <div style="font-size: 20px; font-weight: bold; color: #6b7280;">${totalAllowed}</div>
+                        <div style="font-size: 12px; color: #666;">Goals Against</div>
+                    </div>
+                </div>
+                ${playerStatsHtml}
+            `;
+        }
+
+        function displayGameHistory() {
+            const historyDiv = document.getElementById('game-history');
+            
+            if (games.length === 0) { 
+                historyDiv.innerHTML = '<div style="text-align: center; color: #666; padding: 20px;">No games recorded yet.</div>'; 
+                return; 
+            }
+            
+            let html = '';
+            
+            for (let i = games.length - 1; i >= 0; i--) {
+                const game = games[i];
+                
+                if (!game || typeof game.ourScore !== 'number' || typeof game.theirScore !== 'number') continue;
+                
+                const result = game.ourScore > game.theirScore ? 'W' : game.ourScore < game.theirScore ? 'L' : 'T';
+                const resultColor = result === 'W' ? '#16a34a' : result === 'L' ? '#dc2626' : '#d97706';
+                const resultText = result === 'T' ? 'TIE' : result;
+                
+                // Simplified player stats display
+                let playerStatsHtml = '';
+                if (game.playerStats) {
+                    let hasStats = false;
+                    let playersWithStats = [];
+                    
+                    for (let playerId in game.playerStats) {
+                        const player = players.find(p => p.id == playerId);
+                        const stats = game.playerStats[playerId];
+                        if (player && stats) {
+                            const allStats = [];
+                            
+                            // Offensive stats
+                            if (stats.goals > 0) allStats.push(`${stats.goals}G`);
+                            if (stats.assists > 0) allStats.push(`${stats.assists}A`);
+                            if (stats.shotOn > 0) allStats.push(`${stats.shotOn}SO`);
+                            if (stats.shotOff > 0) allStats.push(`${stats.shotOff}SF`);
+                            
+                            // Passing stats
+                            if (stats.passComplete > 0) allStats.push(`${stats.passComplete}P✓`);
+                            if (stats.passIncomplete > 0) allStats.push(`${stats.passIncomplete}P✗`);
+                            
+                            // Dribbling stats
+                            if (stats.dribbleSuccess > 0) allStats.push(`${stats.dribbleSuccess}D✓`);
+                            if (stats.dribbleMiss > 0) allStats.push(`${stats.dribbleMiss}D✗`);
+                            
+                            // Defensive stats
+                            if (stats.steals > 0) allStats.push(`${stats.steals}ST`);
+                            if (stats.clearance > 0) allStats.push(`${stats.clearance}CL`);
+                            if (stats.blocks > 0) allStats.push(`${stats.blocks}BL`);
+                            if (stats.turnover > 0) allStats.push(`${stats.turnover}TO`);
+                            if (stats.foulCommitted > 0) allStats.push(`${stats.foulCommitted}F`);
+                            
+                            // Goalkeeper stats
+                            if (stats.saveCatch > 0) allStats.push(`${stats.saveCatch}SC`);
+                            if (stats.savePunch > 0) allStats.push(`${stats.savePunch}SP`);
+                            if (stats.goalAllowed > 0) allStats.push(`${stats.goalAllowed}GA`);
+                            
+                            if (allStats.length > 0) {
+                                hasStats = true;
+                                playersWithStats.push({
+                                    player: player,
+                                    statsText: allStats.join(', '),
+                                    priority: (stats.goals || 0) + (stats.assists || 0) // Sort by offensive contribution
+                                });
+                            }
+                        }
+                    }
+                    
+                    if (hasStats) {
+                        // Sort players by offensive contribution (goals + assists)
+                        playersWithStats.sort((a, b) => b.priority - a.priority);
+                        
+                        playerStatsHtml = playersWithStats.map(p => 
+                            `<div style="font-size: 11px; color: #666; padding: 3px 0; border-bottom: 1px solid #f8f8f8;">
+                                <span style="font-weight: 600;">#${p.player.jersey} ${p.player.name}:</span> ${p.statsText}
+                            </div>`
+                        ).join('');
+                    } else {
+                        playerStatsHtml = '<div style="font-size: 11px; color: #666;">No stats recorded</div>';
+                    }
+                } else {
+                    playerStatsHtml = '<div style="font-size: 11px; color: #666;">No player stats available</div>';
+                }
+                
+                html += `
+                    <div style="background: #f8f9fa; padding: 15px; border-radius: 10px; margin-bottom: 15px; border-left: 4px solid ${resultColor};">
+                        <div style="font-weight: 600; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; margin-bottom: 10px;">
+                            <div>
+                                <div style="font-size: 14px;">${game.date || 'Unknown Date'} vs ${game.opponent || 'Unknown Opponent'}</div>
+                                <div style="font-size: 12px; color: #666; margin-top: 2px;">Final: ${game.ourScore}-${game.theirScore}</div>
+                            </div>
+                            <div style="display: flex; align-items: center; gap: 10px;">
+                                <span style="background: ${resultColor}; color: white; padding: 6px 12px; border-radius: 6px; font-size: 12px; font-weight: 700;">${resultText}</span>
+                                <button class="delete-game-btn" onclick="deleteGame(${game.id})">Delete</button>
+                            </div>
+                        </div>
+                        <div style="background: white; padding: 10px; border-radius: 6px;">
+                            ${playerStatsHtml}
+                        </div>
+                    </div>
+                `;
+            }
+            
+            historyDiv.innerHTML = html;
+        }
+    </script>
+</body>
+</html>

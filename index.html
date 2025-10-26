@@ -5,8 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
-    <meta name="apple-mobile-web-app-title" content="Soccer Stats">
-    <title>Soccer Stats Tracker</title>
+    <meta name="apple-mobile-web-app-title" content="LAX Stats">
+    <title>LAX Stats Tracker</title>
     <style>
         * { 
             margin: 0; 
@@ -14,13 +14,22 @@
             box-sizing: border-box;
             -webkit-tap-highlight-color: transparent;
             -webkit-touch-callout: none;
+        }
+        
+        body, div, span, p, h1, h2, h3, h4, input {
             -webkit-user-select: none;
             user-select: none;
         }
         
+        button {
+            -webkit-user-select: none;
+            user-select: none;
+            pointer-events: auto;
+        }
+        
         body { 
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; 
-            background: linear-gradient(135deg, #6b7280 0%, #4b5563 100%); 
+            background: linear-gradient(135deg, #b91c1c 0%, #7f1d1d 100%); 
             min-height: 100vh; 
             padding: env(safe-area-inset-top, 10px) 10px env(safe-area-inset-bottom, 10px) 10px;
             overflow-x: hidden;
@@ -37,7 +46,7 @@
         }
         
         .header { 
-            background: linear-gradient(135deg, #374151, #4b5563); 
+            background: linear-gradient(135deg, #b91c1c, #7f1d1d); 
             color: white; 
             padding: 15px; 
             text-align: center;
@@ -65,10 +74,10 @@
         
         .nav button { 
             flex: 1; 
-            padding: 10px 8px; 
+            padding: 10px 6px; 
             border: none; 
             background: none; 
-            font-size: 12px; 
+            font-size: 11px; 
             cursor: pointer;
             transition: all 0.2s ease;
         }
@@ -78,7 +87,7 @@
         }
         
         .nav button.active { 
-            background: #374151; 
+            background: #b91c1c; 
             color: white; 
         }
         
@@ -112,12 +121,12 @@
         
         .add-player input:focus {
             outline: none;
-            border-color: #6b7280;
+            border-color: #b91c1c;
         }
         
         .add-player button { 
             padding: 10px 16px; 
-            background: #374151; 
+            background: #b91c1c; 
             color: white; 
             border: none; 
             border-radius: 6px; 
@@ -128,7 +137,7 @@
         }
         
         .add-player button:active {
-            background: #1f2937;
+            background: #7f1d1d;
             transform: scale(0.98);
         }
         
@@ -182,13 +191,13 @@
         
         .game-input input:focus {
             outline: none;
-            border-color: #6b7280;
+            border-color: #b91c1c;
         }
         
         .start-game-btn { 
             width: 100%; 
             padding: 12px; 
-            background: #4b5563; 
+            background: #b91c1c; 
             color: white; 
             border: none; 
             border-radius: 6px; 
@@ -199,7 +208,7 @@
         }
         
         .start-game-btn:active {
-            background: #374151;
+            background: #7f1d1d;
             transform: scale(0.98);
         }
         
@@ -227,14 +236,14 @@
         }
         
         .half-btn { 
-            padding: 8px 12px; 
-            margin: 0 3px; 
-            border: 1px solid #6b7280; 
+            padding: 8px 8px; 
+            margin: 2px; 
+            border: 1px solid #b91c1c; 
             background: white; 
             border-radius: 5px; 
             cursor: pointer;
             font-weight: 600;
-            font-size: 11px;
+            font-size: 9px;
             transition: all 0.2s ease;
         }
         
@@ -243,7 +252,7 @@
         }
         
         .half-btn.active { 
-            background: #6b7280; 
+            background: #b91c1c; 
             color: white; 
         }
         
@@ -326,9 +335,9 @@
         }
         
         .player-btn.selected { 
-            background: #4b5563; 
+            background: #b91c1c; 
             color: white;
-            border-color: #4b5563;
+            border-color: #b91c1c;
         }
         
         .stat-buttons { 
@@ -353,10 +362,12 @@
             justify-content: center;
             text-align: center;
             line-height: 1.1;
+            background: #1f2937;
         }
         
         .stat-btn:active {
             transform: scale(0.95);
+            background: #111827;
         }
         
         .stat-btn.flash { 
@@ -365,67 +376,19 @@
             box-shadow: 0 4px 20px rgba(22, 163, 74, 0.4);
         }
         
-        .goals, .assists, .shot-on, .shot-off,
-        .steals, .pass-complete, .pass-incomplete, .turnover,
-        .clearance, .dribble-success, .dribble-miss, .blocks, .foul { 
-            background: #dc2626; 
-        }
-        
-        .save-catch, .save-punch, .goal-allowed { 
-            background: #6b7280; 
-        }
-        
-        .goalie-section { 
-            margin-top: 15px; 
+        .final-score-form { 
+            text-align: center; 
+            margin-bottom: 15px; 
             padding: 12px; 
-            background: #f9fafb; 
+            background: #f3f4f6; 
             border-radius: 6px; 
             border: 1px solid #d1d5db; 
         }
         
-        .goalie-section > div:first-child {
-            text-align: center;
+        .final-score-form > div:first-child {
+            margin-bottom: 10px;
             font-weight: 600;
-            color: #374151;
-            margin-bottom: 12px;
             font-size: 13px;
-        }
-        
-        .finish-game-btn { 
-            width: 100%; 
-            padding: 12px; 
-            background: #4b5563; 
-            color: white; 
-            border: none; 
-            border-radius: 6px; 
-            margin-bottom: 12px; 
-            cursor: pointer;
-            font-size: 13px;
-            font-weight: 600;
-            transition: all 0.2s ease;
-        }
-        
-        .finish-game-btn:active {
-            background: #374151;
-            transform: scale(0.98);
-        }
-        
-        .final-score-form { 
-            display: none; 
-            background: #f8f9fa; 
-            padding: 15px; 
-            border-radius: 6px; 
-            margin-bottom: 12px; 
-        }
-        
-        .final-score-form h3 {
-            text-align: center;
-            margin-bottom: 15px;
-            font-size: 15px;
-        }
-        
-        .final-score-form.show { 
-            display: block; 
         }
         
         .score-input-row { 
@@ -450,7 +413,7 @@
         
         .score-input-row input:focus {
             outline: none;
-            border-color: #6b7280;
+            border-color: #b91c1c;
         }
         
         .score-input-row label {
@@ -464,49 +427,40 @@
         }
         
         .save-btn, .cancel-btn, .abandon-btn { 
-            flex: 1; 
-            padding: 10px; 
-            border: none; 
+            padding: 8px 12px; 
+            margin: 0 3px; 
+            border: 1px solid #b91c1c; 
             border-radius: 5px; 
             cursor: pointer;
-            font-size: 12px;
             font-weight: 600;
+            font-size: 11px;
             transition: all 0.2s ease;
+            background: white;
+            pointer-events: auto;
+            position: relative;
+            z-index: 10;
+        }
+        
+        .save-btn:active, .cancel-btn:active, .abandon-btn:active {
+            transform: scale(0.95);
         }
         
         .save-btn { 
             background: #16a34a; 
-            color: white; 
-        }
-        
-        .save-btn:active {
-            background: #15803d;
-            transform: scale(0.98);
+            color: white;
+            border-color: #16a34a;
         }
         
         .cancel-btn { 
             background: #6c757d; 
-            color: white; 
-        }
-        
-        .cancel-btn:active {
-            background: #545b62;
-            transform: scale(0.98);
+            color: white;
+            border-color: #6c757d;
         }
         
         .abandon-btn {
             background: #dc2626;
             color: white;
-        }
-        
-        .abandon-btn:active {
-            background: #b91c1c;
-            transform: scale(0.98);
-        }
-        
-        .button-row { 
-            display: flex; 
-            gap: 10px; 
+            border-color: #dc2626;
         }
         
         .delete-game-btn {
@@ -519,6 +473,9 @@
             cursor: pointer;
             font-weight: 600;
             transition: all 0.2s ease;
+            pointer-events: auto;
+            position: relative;
+            z-index: 10;
         }
         
         .delete-game-btn:active {
@@ -547,13 +504,69 @@
             background: #dc2626;
             color: white;
         }
+        
+        .custom-confirm {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 2000;
+        }
+        
+        .custom-confirm.show {
+            display: flex;
+        }
+        
+        .custom-confirm-box {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            max-width: 300px;
+            text-align: center;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+        }
+        
+        .custom-confirm-message {
+            margin-bottom: 20px;
+            font-size: 14px;
+            color: #374151;
+        }
+        
+        .custom-confirm-buttons {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .custom-confirm-btn {
+            flex: 1;
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            font-weight: 600;
+            cursor: pointer;
+            font-size: 13px;
+        }
+        
+        .custom-confirm-yes {
+            background: #dc2626;
+            color: white;
+        }
+        
+        .custom-confirm-no {
+            background: #6c757d;
+            color: white;
+        }
     </style>
 </head>
 <body>
     <div class="container">
         <div class="header">
-            <h1>⚽ Soccer Stats</h1>
-            <p>Kids Travel Team Tracker</p>
+            <h1>SportStats 🥍 LAX</h1>
         </div>
 
         <div class="nav">
@@ -561,6 +574,7 @@
             <button class="nav-btn" onclick="showTab('game')">Game</button>
             <button class="nav-btn" onclick="showTab('stats')">Stats</button>
             <button class="nav-btn" onclick="showTab('help')">Help</button>
+            <button class="nav-btn" onclick="showTab('about')">About</button>
         </div>
 
         <div id="roster-tab" class="tab-content active">
@@ -584,9 +598,14 @@
             <div id="game-active" class="game-active">
                 <div class="half-tracker">
                     <div style="margin-bottom: 10px; font-weight: 600; font-size: 13px;">Game Period</div>
-                    <div style="display: flex; justify-content: center; gap: 8px; margin-bottom: 10px;">
+                    <div style="display: flex; justify-content: center; gap: 3px; margin-bottom: 10px; flex-wrap: nowrap;">
                         <button class="half-btn active" onclick="setHalf(1)">1st Half</button>
                         <button class="half-btn" onclick="setHalf(2)">2nd Half</button>
+                        <button class="half-btn" onclick="setHalf(3)">Q1</button>
+                        <button class="half-btn" onclick="setHalf(4)">Q2</button>
+                        <button class="half-btn" onclick="setHalf(5)">Q3</button>
+                        <button class="half-btn" onclick="setHalf(6)">Q4</button>
+                        <button class="half-btn" onclick="setHalf(7)">OT</button>
                     </div>
                     <button class="undo-btn" id="undo-btn" onclick="undoLastAction()">↶ Subtract Mode - Click to activate</button>
                 </div>
@@ -600,39 +619,36 @@
                 </div>
 
                 <div class="stat-buttons">
-                    <button class="stat-btn goals" onclick="addStat('goals')">Goals</button>
-                    <button class="stat-btn assists" onclick="addStat('assists')">Assists</button>
-                    <button class="stat-btn shot-on" onclick="addStat('shotOn')">Shot On</button>
-                    <button class="stat-btn shot-off" onclick="addStat('shotOff')">Shot Off</button>
-                    <button class="stat-btn steals" onclick="addStat('steals')">Steals</button>
-                    <button class="stat-btn pass-complete" onclick="addStat('passComplete')">Pass ✓</button>
-                    <button class="stat-btn pass-incomplete" onclick="addStat('passIncomplete')">Pass ✗</button>
-                    <button class="stat-btn turnover" onclick="addStat('turnover')">Turnover</button>
-                    <button class="stat-btn clearance" onclick="addStat('clearance')">Clearance</button>
-                    <button class="stat-btn dribble-success" onclick="addStat('dribbleSuccess')">Dribble ✓</button>
-                    <button class="stat-btn dribble-miss" onclick="addStat('dribbleMiss')">Dribble ✗</button>
-                    <button class="stat-btn blocks" onclick="addStat('blocks')">Blocks</button>
-                    <button class="stat-btn foul" onclick="addStat('foulCommitted')">Foul</button>
-                    <button class="stat-btn save-catch" onclick="addStat('saveCatch')">Save Catch</button>
-                    <button class="stat-btn save-punch" onclick="addStat('savePunch')">Save Punch</button>
-                    <button class="stat-btn goal-allowed" onclick="addStat('goalAllowed')">Goal Allow</button>
+                    <button class="stat-btn" onclick="addStat('goals')">Goal</button>
+                    <button class="stat-btn" onclick="addStat('assists')">Assist</button>
+                    <button class="stat-btn" onclick="addStat('shotsOnGoal')">Shot On Goal</button>
+                    <button class="stat-btn" onclick="addStat('shots')">Shot</button>
+                    <button class="stat-btn" onclick="addStat('groundBalls')">Ground Ball</button>
+                    <button class="stat-btn" onclick="addStat('blockedShots')">Blocked Shot</button>
+                    <button class="stat-btn" onclick="addStat('causedTurnovers')">Caused Turnover</button>
+                    <button class="stat-btn" onclick="addStat('turnovers')">Turnover</button>
+                    <button class="stat-btn" onclick="addStat('passesComplete')">Pass Complete</button>
+                    <button class="stat-btn" onclick="addStat('passesIncomplete')">Pass Incomplete</button>
+                    <button class="stat-btn" onclick="addStat('faceoffsLost')">Faceoff Lost</button>
+                    <button class="stat-btn" onclick="addStat('faceoffsWon')">Faceoff Won</button>
+                    <button class="stat-btn" onclick="addStat('fouls')">Foul</button>
+                    <button class="stat-btn" onclick="addStat('saves')">Save</button>
+                    <button class="stat-btn" onclick="addStat('goalsAllowed')">Goal Allowed</button>
                 </div>
 
-                <button class="finish-game-btn" onclick="showFinalScore()">Finish Game & Enter Score</button>
-                
-                <div id="final-score-form" class="final-score-form">
-                    <h3 style="text-align: center; margin-bottom: 20px; font-size: 18px;">Final Score</h3>
+                <div id="final-score-form" class="final-score-form show">
+                    <div style="margin-bottom: 10px; font-weight: 600; font-size: 13px;">Final Score</div>
                     <div class="score-input-row">
-                        <label style="font-weight: 600; font-size: 14px;">Our Team</label>
+                        <label style="font-weight: 600; font-size: 12px;">Our Team</label>
                         <input type="number" id="final-our-score" min="0" value="0" autocomplete="off">
-                        <span style="font-size: 24px; font-weight: bold;">-</span>
+                        <span style="font-size: 20px; font-weight: bold;">-</span>
                         <input type="number" id="final-their-score" min="0" value="0" autocomplete="off">
-                        <label id="opponent-label" style="font-weight: 600; font-size: 14px;">Opponent</label>
+                        <label id="opponent-label" style="font-weight: 600; font-size: 12px;">Opponent</label>
                     </div>
-                    <div class="button-row">
-                        <button class="save-btn" onclick="saveGame()">Save Game</button>
-                        <button class="cancel-btn" onclick="cancelFinish()">Cancel</button>
-                        <button class="abandon-btn" onclick="abandonGame()">Abandon Game</button>
+                    <div style="display: flex; justify-content: center; gap: 8px; flex-wrap: wrap;">
+                        <button class="save-btn" id="save-game-btn">Save Game</button>
+                        <button class="cancel-btn" id="clear-scores-btn">Clear Scores</button>
+                        <button class="abandon-btn" id="abandon-game-btn">Abandon Game</button>
                     </div>
                 </div>
             </div>
@@ -642,67 +658,10 @@
             <div style="background: #f8f9fa; padding: 15px; border-radius: 10px; margin-bottom: 15px;">
                 <div style="font-weight: 600; margin-bottom: 12px; text-align: center; font-size: 14px;">Data Backup</div>
                 <div style="display: flex; gap: 8px; margin-bottom: 15px;">
-                    <button onclick="
-                        try {
-                            const data = { players: players, games: games, exportDate: new Date().toISOString(), version: '1.0' };
-                            const dataStr = JSON.stringify(data, null, 2);
-                            const blob = new Blob([dataStr], { type: 'application/json' });
-                            const file = new File([blob], 'soccer-stats-backup-' + new Date().toISOString().split('T')[0] + '.json', { type: 'application/json' });
-                            
-                            if (navigator.share && navigator.canShare && navigator.canShare({ files: [file] })) {
-                                navigator.share({
-                                    files: [file],
-                                    title: 'Soccer Stats Backup',
-                                    text: 'Soccer stats data backup file'
-                                }).then(() => {
-                                    showNotification('Data exported successfully!');
-                                }).catch((err) => {
-                                    if (err.name !== 'AbortError') {
-                                        showNotification('Share cancelled', 'error');
-                                    }
-                                });
-                            } else {
-                                // Fallback: copy to clipboard
-                                navigator.clipboard.writeText(dataStr).then(() => {
-                                    showNotification('Data copied to clipboard! Paste into Notes app and save.');
-                                }).catch(() => {
-                                    alert('Export not supported. Data: ' + dataStr.substring(0, 100) + '... (Copy this text manually)');
-                                });
-                            }
-                        } catch(e) {
-                            console.error(e);
-                            showNotification('Export failed: ' + e.message, 'error');
-                        }
-                    " style="flex: 1; padding: 8px; background: #059669; color: white; border: none; border-radius: 5px; font-size: 11px; font-weight: 600; cursor: pointer;">Export Data</button>
-                    <button onclick="document.getElementById('importFile').click()" style="flex: 1; padding: 8px; background: #2563eb; color: white; border: none; border-radius: 5px; font-size: 11px; font-weight: 600; cursor: pointer;">Import Data</button>
+                    <button onclick="exportData()" style="flex: 1; padding: 8px; background: #059669; color: white; border: none; border-radius: 5px; font-size: 11px; font-weight: 600; cursor: pointer;">Export Data</button>
+                    <button onclick="document.getElementById('importFile').click()" style="flex: 1; padding: 8px; background: #b91c1c; color: white; border: none; border-radius: 5px; font-size: 11px; font-weight: 600; cursor: pointer;">Import Data</button>
                 </div>
-                <input type="file" id="importFile" accept=".json" style="display: none;" onchange="
-                    const file = event.target.files[0];
-                    if (!file) return;
-                    const reader = new FileReader();
-                    reader.onload = function(e) {
-                        try {
-                            const data = JSON.parse(e.target.result);
-                            if (data.players && data.games) {
-                                if (confirm('This will replace all current data. Continue?')) {
-                                    players = data.players;
-                                    games = data.games;
-                                    saveData();
-                                    displayPlayers();
-                                    displayStats();
-                                    showNotification('Data imported successfully!');
-                                }
-                            } else {
-                                showNotification('Invalid backup file', 'error');
-                            }
-                        } catch (error) {
-                            console.error('Import error:', error);
-                            showNotification('Error importing data', 'error');
-                        }
-                    };
-                    reader.readAsText(file);
-                    event.target.value = '';
-                ">
+                <input type="file" id="importFile" accept=".json" style="display: none;" onchange="importData(event)">
             </div>
             
             <div style="background: #f8f9fa; padding: 20px; border-radius: 10px; margin-bottom: 20px;">
@@ -717,76 +676,161 @@
 
         <div id="help-tab" class="tab-content">
             <div style="background: #f8f9fa; padding: 15px; border-radius: 10px;">
-                <h2 style="text-align: center; color: #374151; margin-bottom: 20px; font-size: 15px;">📖 Stats Guide</h2>
+                <h2 style="text-align: center; color: #b91c1c; margin-bottom: 20px; font-size: 15px;">📖 LAX Stats Glossary</h2>
                 
                 <div style="margin-bottom: 15px;">
-                    <h3 style="color: #4b5563; margin-bottom: 8px; font-size: 12px;">⚽ Offensive Stats</h3>
-                    <div style="background: white; padding: 8px; margin: 6px 0; border-radius: 6px; border-left: 3px solid #4b5563; font-size: 11px;"><strong>Goals (G)</strong> - Ball crosses goal line</div>
-                    <div style="background: white; padding: 8px; margin: 6px 0; border-radius: 6px; border-left: 3px solid #4b5563; font-size: 11px;"><strong>Assists (A)</strong> - Final pass leading to goal</div>
-                    <div style="background: white; padding: 8px; margin: 6px 0; border-radius: 6px; border-left: 3px solid #4b5563; font-size: 11px;"><strong>Shot On (SO)</strong> - Shot on target</div>
-                    <div style="background: white; padding: 8px; margin: 6px 0; border-radius: 6px; border-left: 3px solid #4b5563; font-size: 11px;"><strong>Shot Off (SF)</strong> - Shot off target</div>
+                    <h3 style="color: #16a34a; margin-bottom: 8px; font-size: 12px;">🥍 Action Definitions</h3>
+                    <div style="background: white; padding: 8px; margin: 6px 0; border-radius: 6px; border-left: 3px solid #16a34a; font-size: 11px;"><strong>G (Goal):</strong> A successful shot that scores a point for your team</div>
+                    <div style="background: white; padding: 8px; margin: 6px 0; border-radius: 6px; border-left: 3px solid #0891b2; font-size: 11px;"><strong>A (Assist):</strong> A pass that directly leads to a goal</div>
+                    <div style="background: white; padding: 8px; margin: 6px 0; border-radius: 6px; border-left: 3px solid #b91c1c; font-size: 11px;"><strong>SOG (Shot On Goal):</strong> A shot that would have scored if not for a save by the goalie</div>
+                    <div style="background: white; padding: 8px; margin: 6px 0; border-radius: 6px; border-left: 3px solid #7f1d1d; font-size: 11px;"><strong>SH (Shot):</strong> Any shot attempt, including those that miss the goal</div>
+                    <div style="background: white; padding: 8px; margin: 6px 0; border-radius: 6px; border-left: 3px solid #d97706; font-size: 11px;"><strong>GB (Ground Ball):</strong> Picking up a loose ball from the ground</div>
+                    <div style="background: white; padding: 8px; margin: 6px 0; border-radius: 6px; border-left: 3px solid #6366f1; font-size: 11px;"><strong>BL (Blocked Shot):</strong> Deflecting or stopping an opponent's shot attempt</div>
+                    <div style="background: white; padding: 8px; margin: 6px 0; border-radius: 6px; border-left: 3px solid #059669; font-size: 11px;"><strong>CT (Caused Turnover):</strong> Forcing the opposing team to lose possession</div>
+                    <div style="background: white; padding: 8px; margin: 6px 0; border-radius: 6px; border-left: 3px solid #e11d48; font-size: 11px;"><strong>TO (Turnover):</strong> Losing possession of the ball to the opposing team</div>
+                    <div style="background: white; padding: 8px; margin: 6px 0; border-radius: 6px; border-left: 3px solid #16a34a; font-size: 11px;"><strong>P ✓ (Pass Complete):</strong> Successfully completing a pass to a teammate</div>
+                    <div style="background: white; padding: 8px; margin: 6px 0; border-radius: 6px; border-left: 3px solid #dc2626; font-size: 11px;"><strong>P ✗ (Pass Incomplete):</strong> An unsuccessful or intercepted pass attempt</div>
+                    <div style="background: white; padding: 8px; margin: 6px 0; border-radius: 6px; border-left: 3px solid #dc2626; font-size: 11px;"><strong>FL (Faceoff Lost):</strong> Losing possession at the faceoff/draw</div>
+                    <div style="background: white; padding: 8px; margin: 6px 0; border-radius: 6px; border-left: 3px solid #16a34a; font-size: 11px;"><strong>FW (Faceoff Won):</strong> Winning possession at the faceoff/draw</div>
+                    <div style="background: white; padding: 8px; margin: 6px 0; border-radius: 6px; border-left: 3px solid #78716c; font-size: 11px;"><strong>F (Foul):</strong> A rule violation committed by the player</div>
+                    <div style="background: white; padding: 8px; margin: 6px 0; border-radius: 6px; border-left: 3px solid #0891b2; font-size: 11px;"><strong>S (Save):</strong> A goalie preventing a shot on goal from scoring</div>
+                    <div style="background: white; padding: 8px; margin: 6px 0; border-radius: 6px; border-left: 3px solid #dc2626; font-size: 11px;"><strong>GA (Goal Allowed):</strong> A goal scored against your team while this goalie was in net</div>
                 </div>
                 
                 <div style="margin-bottom: 15px;">
-                    <h3 style="color: #059669; margin-bottom: 8px; font-size: 12px;">⚡ Passing & Dribbling</h3>
-                    <div style="background: white; padding: 8px; margin: 6px 0; border-radius: 6px; border-left: 3px solid #059669; font-size: 11px;"><strong>Pass Complete (P✓)</strong> - Successful pass</div>
-                    <div style="background: white; padding: 8px; margin: 6px 0; border-radius: 6px; border-left: 3px solid #059669; font-size: 11px;"><strong>Pass Incomplete (P✗)</strong> - Unsuccessful pass</div>
-                    <div style="background: white; padding: 8px; margin: 6px 0; border-radius: 6px; border-left: 3px solid #059669; font-size: 11px;"><strong>Dribble Success (D✓)</strong> - Successful dribble</div>
-                    <div style="background: white; padding: 8px; margin: 6px 0; border-radius: 6px; border-left: 3px solid #059669; font-size: 11px;"><strong>Dribble Miss (D✗)</strong> - Unsuccessful dribble</div>
+                    <h3 style="color: #374151; margin-bottom: 8px; font-size: 12px;">📊 Calculated Stats</h3>
+                    <div style="background: white; padding: 8px; margin: 6px 0; border-radius: 6px; border-left: 3px solid #374151; font-size: 11px;"><strong>GPG:</strong> Goals per game (total goals ÷ games played)</div>
+                    <div style="background: white; padding: 8px; margin: 6px 0; border-radius: 6px; border-left: 3px solid #374151; font-size: 11px;"><strong>APG:</strong> Assists per game (total assists ÷ games played)</div>
+                    <div style="background: white; padding: 8px; margin: 6px 0; border-radius: 6px; border-left: 3px solid #374151; font-size: 11px;"><strong>GBPG:</strong> Ground balls per game (total ground balls ÷ games played)</div>
+                    <div style="background: white; padding: 8px; margin: 6px 0; border-radius: 6px; border-left: 3px solid #374151; font-size: 11px;"><strong>Shot %:</strong> Shooting percentage (goals ÷ shots × 100)</div>
                 </div>
                 
-                <div style="margin-bottom: 15px;">
-                    <h3 style="color: #6b7280; margin-bottom: 8px; font-size: 12px;">🛡️ Defensive Stats</h3>
-                    <div style="background: white; padding: 8px; margin: 6px 0; border-radius: 6px; border-left: 3px solid #6b7280; font-size: 11px;"><strong>Steals (ST)</strong> - Taking ball from opponent</div>
-                    <div style="background: white; padding: 8px; margin: 6px 0; border-radius: 6px; border-left: 3px solid #6b7280; font-size: 11px;"><strong>Clearance (CL)</strong> - Kicking ball from danger</div>
-                    <div style="background: white; padding: 8px; margin: 6px 0; border-radius: 6px; border-left: 3px solid #6b7280; font-size: 11px;"><strong>Blocks (BL)</strong> - Blocking opponent's shot</div>
-                    <div style="background: white; padding: 8px; margin: 6px 0; border-radius: 6px; border-left: 3px solid #6b7280; font-size: 11px;"><strong>Turnover (TO)</strong> - Losing possession</div>
-                    <div style="background: white; padding: 8px; margin: 6px 0; border-radius: 6px; border-left: 3px solid #6b7280; font-size: 11px;"><strong>Foul (F)</strong> - Illegal contact</div>
-                </div>
-                
-                <div style="margin-bottom: 15px;">
-                    <h3 style="color: #374151; margin-bottom: 8px; font-size: 12px;">🥅 Goalkeeper Stats</h3>
-                    <div style="background: white; padding: 8px; margin: 6px 0; border-radius: 6px; border-left: 3px solid #374151; font-size: 11px;"><strong>Save-Catch (SC)</strong> - Catching ball cleanly</div>
-                    <div style="background: white; padding: 8px; margin: 6px 0; border-radius: 6px; border-left: 3px solid #374151; font-size: 11px;"><strong>Save-Punch (SP)</strong> - Punching ball away</div>
-                    <div style="background: white; padding: 8px; margin: 6px 0; border-radius: 6px; border-left: 3px solid #374151; font-size: 11px;"><strong>Goal Allowed (GA)</strong> - Ball goes in past keeper</div>
-                </div>
-                
-                <div style="background: #f3f4f6; padding: 12px; border-radius: 6px; border-left: 3px solid #6b7280;">
+                <div style="background: #f3f4f6; padding: 12px; border-radius: 6px; border-left: 3px solid #b91c1c;">
                     <h4 style="color: #374151; margin-bottom: 8px; font-size: 11px;">💡 Tips:</h4>
                     <ul style="color: #4b5563; padding-left: 18px; line-height: 1.4; font-size: 10px;">
-                        <li>Use half buttons to track game period</li>
-                        <li>Toggle subtract mode to remove stats</li>
+                        <li>Use period buttons to track game quarters or halves</li>
+                        <li>Toggle subtract mode to remove incorrect stats</li>
                         <li>Visual feedback shows recorded stats</li>
-                        <li>Add to home screen for app-like experience</li>
+                        <li>Goals automatically update the score</li>
+                        <li>Export data regularly to backup your stats</li>
                     </ul>
+                </div>
+            </div>
+        </div>
+
+        <div id="about-tab" class="tab-content">
+            <div style="background: #f8f9fa; padding: 20px; border-radius: 10px;">
+                <div style="text-align: center; margin-bottom: 25px;">
+                    <h1 style="font-size: 24px; color: #b91c1c; margin-bottom: 8px;">🥍 SportStats LAX</h1>
+                    <div style="font-size: 12px; color: #6b7280; font-weight: 600;">Version 1.0 • October 2025</div>
+                </div>
+
+                <div style="background: white; padding: 15px; border-radius: 8px; margin-bottom: 15px;">
+                    <p style="font-size: 13px; color: #374151; line-height: 1.6; text-align: center;">
+                        Built by lacrosse parents, for lacrosse families. Simple stats tracking that celebrates your player's growth.
+                    </p>
+                </div>
+
+                <div style="background: white; padding: 15px; border-radius: 8px; margin-bottom: 15px;">
+                    <h3 style="color: #b91c1c; margin-bottom: 12px; font-size: 14px; text-align: center;">✨ Key Features</h3>
+                    <ul style="color: #4b5563; padding-left: 20px; line-height: 1.8; font-size: 12px;">
+                        <li>Track 15 different lacrosse statistics in real-time</li>
+                        <li>Calculate season averages and shooting percentages</li>
+                        <li>Export and backup your data anytime</li>
+                        <li>Mobile-friendly design for sideline tracking</li>
+                    </ul>
+                </div>
+
+                <div style="background: white; padding: 15px; border-radius: 8px; margin-bottom: 15px;">
+                    <h3 style="color: #b91c1c; margin-bottom: 12px; font-size: 14px; text-align: center;">🚀 Quick Start</h3>
+                    <ol style="color: #4b5563; padding-left: 20px; line-height: 1.8; font-size: 12px;">
+                        <li>Add your players in the <strong>Roster</strong> tab</li>
+                        <li>Start a game in the <strong>Game</strong> tab</li>
+                        <li>Select a player and tap stats as they happen</li>
+                        <li>Enter final score and save the game</li>
+                        <li>View season stats in the <strong>Stats</strong> tab</li>
+                    </ol>
+                </div>
+
+                <div style="background: white; padding: 15px; border-radius: 8px; margin-bottom: 15px;">
+                    <h3 style="color: #b91c1c; margin-bottom: 12px; font-size: 14px; text-align: center;">👨‍💻 Creator</h3>
+                    <div style="font-size: 12px; color: #4b5563;">
+                        <div style="font-weight: 600; margin-bottom: 8px;">Mauricio Rodriguez</div>
+                        <div style="display: flex; flex-direction: column; gap: 5px;">
+                            <div>
+                                <a href="https://github.com/ma-rodz" target="_blank" style="color: #374151; text-decoration: none;">
+                                    <span style="font-weight: 600;">GitHub:</span> ma-rodz
+                                </a>
+                            </div>
+                            <div>
+                                <a href="https://x.com/ma_rods" target="_blank" style="color: #374151; text-decoration: none;">
+                                    <span style="font-weight: 600;">X:</span> @ma_rods
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div style="background: white; padding: 15px; border-radius: 8px;">
+                    <h3 style="color: #b91c1c; margin-bottom: 12px; font-size: 14px; text-align: center;">🔒 Privacy</h3>
+                    <p style="font-size: 12px; color: #4b5563; line-height: 1.6;">
+                        All data is stored locally on your device. No information is sent to external servers. 
+                        Your team's stats are private and secure.
+                    </p>
                 </div>
             </div>
         </div>
     </div>
 
+    <div id="custom-confirm" class="custom-confirm">
+        <div class="custom-confirm-box">
+            <div id="custom-confirm-message" class="custom-confirm-message"></div>
+            <div class="custom-confirm-buttons">
+                <button class="custom-confirm-btn custom-confirm-yes" id="confirm-yes">Yes</button>
+                <button class="custom-confirm-btn custom-confirm-no" id="confirm-no">Cancel</button>
+            </div>
+        </div>
+    </div>
+
     <script>
-        // Initialize with clean data
         let players = [];
         let games = [];
         let currentGame = null;
         let selectedPlayer = null;
         let currentHalf = 1;
         let lastAction = null;
-        let subtractMode = false; // New variable to track subtract mode
+        let subtractMode = false;
+        let confirmCallback = null;
+
+        function customConfirm(message, callback) {
+            document.getElementById('custom-confirm-message').textContent = message;
+            document.getElementById('custom-confirm').classList.add('show');
+            confirmCallback = callback;
+        }
+        
+        document.getElementById('confirm-yes').addEventListener('click', function() {
+            document.getElementById('custom-confirm').classList.remove('show');
+            if (confirmCallback) confirmCallback(true);
+            confirmCallback = null;
+        });
+        
+        document.getElementById('confirm-no').addEventListener('click', function() {
+            document.getElementById('custom-confirm').classList.remove('show');
+            if (confirmCallback) confirmCallback(false);
+            confirmCallback = null;
+        });
 
         document.addEventListener('DOMContentLoaded', function() {
             loadData(); 
             displayPlayers(); 
             setTodaysDate();
             
-            // Prevent zoom on input focus for iOS
             document.querySelectorAll('input').forEach(input => {
                 input.addEventListener('focus', function() {
                     this.style.fontSize = '16px';
                 });
             });
             
-            // Add haptic feedback simulation
             document.querySelectorAll('button').forEach(button => {
                 button.addEventListener('touchstart', function() {
                     if (navigator.vibrate) {
@@ -794,6 +838,62 @@
                     }
                 });
             });
+            
+            // Add event listeners for final score buttons
+            const saveBtn = document.getElementById('save-game-btn');
+            const clearBtn = document.getElementById('clear-scores-btn');
+            const abandonBtn = document.getElementById('abandon-game-btn');
+            
+            if (saveBtn) {
+                saveBtn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    console.log('Save button clicked');
+                    console.log('saveGame function exists:', typeof saveGame);
+                    if (typeof saveGame === 'function') {
+                        saveGame();
+                    } else {
+                        console.error('saveGame is not a function!');
+                    }
+                });
+            }
+            
+            if (clearBtn) {
+                clearBtn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    
+                    const ourScore = document.getElementById('final-our-score');
+                    const theirScore = document.getElementById('final-their-score');
+                    
+                    if (ourScore) ourScore.value = '0';
+                    if (theirScore) theirScore.value = '0';
+                    
+                    showNotification('Scores cleared');
+                });
+            }
+            
+            if (abandonBtn) {
+                abandonBtn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    
+                    customConfirm('Are you sure you want to abandon this game? All stats will be lost.', function(confirmed) {
+                        if (confirmed) {
+                            currentGame = null;
+                            selectedPlayer = null;
+                            subtractMode = false;
+                            document.getElementById('game-active').style.display = 'none';
+                            document.getElementById('game-setup').style.display = 'block';
+                            document.getElementById('opponent').value = '';
+                            document.getElementById('final-our-score').value = '0';
+                            document.getElementById('final-their-score').value = '0';
+                            setTodaysDate();
+                            showNotification('Game abandoned successfully!');
+                        }
+                    });
+                });
+            }
         });
 
         function showNotification(message, type = 'success') {
@@ -809,8 +909,8 @@
 
         function loadData() {
             try {
-                const p = localStorage.getItem('soccerPlayers');
-                const g = localStorage.getItem('soccerGames');
+                const p = localStorage.getItem('lacrossePlayers');
+                const g = localStorage.getItem('lacrosseGames');
                 
                 if (p) {
                     const parsedPlayers = JSON.parse(p);
@@ -837,8 +937,8 @@
 
         function saveData() {
             try {
-                localStorage.setItem('soccerPlayers', JSON.stringify(players));
-                localStorage.setItem('soccerGames', JSON.stringify(games));
+                localStorage.setItem('lacrossePlayers', JSON.stringify(players));
+                localStorage.setItem('lacrosseGames', JSON.stringify(games));
             } catch (e) { 
                 console.error('Error saving data:', e); 
                 showNotification('Error saving data', 'error');
@@ -945,19 +1045,20 @@
             };
             
             lastAction = null;
-            subtractMode = false; // Reset subtract mode when starting new game
+            subtractMode = false;
             
             players.forEach(player => {
                 currentGame.playerStats[player.id] = { 
-                    goals: 0, assists: 0, shotOn: 0, shotOff: 0, steals: 0, 
-                    passComplete: 0, passIncomplete: 0, turnover: 0, clearance: 0, 
-                    dribbleSuccess: 0, dribbleMiss: 0, blocks: 0, foulCommitted: 0, 
-                    saveCatch: 0, savePunch: 0, goalAllowed: 0 
+                    goals: 0, assists: 0, shotsOnGoal: 0, shots: 0,
+                    groundBalls: 0, blockedShots: 0, causedTurnovers: 0, turnovers: 0,
+                    passesComplete: 0, passesIncomplete: 0, faceoffsLost: 0, faceoffsWon: 0,
+                    fouls: 0, saves: 0, goalsAllowed: 0
                 };
             });
             
             document.getElementById('game-setup').style.display = 'none';
             document.getElementById('game-active').classList.add('show');
+            document.getElementById('opponent-label').textContent = opponent;
             currentHalf = 1; 
             setHalf(1); 
             setupPlayerButtons(); 
@@ -989,11 +1090,31 @@
             if (playerBtn) playerBtn.classList.add('selected');
             
             const stats = currentGame.playerStats[playerId];
-            const totalStats = Object.values(stats).reduce((sum, val) => sum + val, 0);
+            const goals = stats.goals || 0;
+            
+            const statsSummary = [];
+            if (stats.goals > 0) statsSummary.push(`${stats.goals}G`);
+            if (stats.assists > 0) statsSummary.push(`${stats.assists}A`);
+            if (stats.shotsOnGoal > 0) statsSummary.push(`${stats.shotsOnGoal}SOG`);
+            if (stats.shots > 0) statsSummary.push(`${stats.shots}SH`);
+            if (stats.groundBalls > 0) statsSummary.push(`${stats.groundBalls}GB`);
+            if (stats.blockedShots > 0) statsSummary.push(`${stats.blockedShots}BL`);
+            if (stats.causedTurnovers > 0) statsSummary.push(`${stats.causedTurnovers}CT`);
+            if (stats.turnovers > 0) statsSummary.push(`${stats.turnovers}TO`);
+            if (stats.passesComplete > 0) statsSummary.push(`${stats.passesComplete}P✓`);
+            if (stats.passesIncomplete > 0) statsSummary.push(`${stats.passesIncomplete}P✗`);
+            if (stats.faceoffsLost > 0) statsSummary.push(`${stats.faceoffsLost}FL`);
+            if (stats.faceoffsWon > 0) statsSummary.push(`${stats.faceoffsWon}FW`);
+            if (stats.fouls > 0) statsSummary.push(`${stats.fouls}F`);
+            if (stats.saves > 0) statsSummary.push(`${stats.saves}S`);
+            if (stats.goalsAllowed > 0) statsSummary.push(`${stats.goalsAllowed}GA`);
+            
+            const detailedStats = statsSummary.length > 0 ? statsSummary.join(', ') : 'No actions recorded yet';
             
             document.getElementById('selected-player').innerHTML = `
                 <div style="font-size: 16px; font-weight: 600;">Selected: #${player.jersey} ${player.name}</div>
-                <div style="font-size: 12px; color: #666; margin-top: 5px;">Current game: ${totalStats} actions recorded</div>
+                <div style="font-size: 14px; color: #b91c1c; margin-top: 5px; font-weight: 600;">${goals} Goals</div>
+                <div style="font-size: 11px; color: #666; margin-top: 5px; line-height: 1.5;">${detailedStats}</div>
             `;
         }
 
@@ -1005,6 +1126,10 @@
             });
         }
 
+        function calculatePoints(stats) {
+            return stats.goals || 0;
+        }
+
         function addStat(statType) {
             if (!selectedPlayer) { 
                 showNotification('Please select a player first', 'error');
@@ -1014,15 +1139,12 @@
             const player = players.find(p => p.id === selectedPlayer);
             const targetButton = event.target;
             
-            // Store the original text before modifying
             if (!targetButton.hasAttribute('data-original-text')) {
                 targetButton.setAttribute('data-original-text', targetButton.textContent);
             }
             const originalText = targetButton.getAttribute('data-original-text');
             
-            // Check if in subtract mode
             if (subtractMode) {
-                // Subtract mode - remove 1 from stat
                 if (currentGame.playerStats[selectedPlayer][statType] <= 0) {
                     showNotification('Cannot subtract - stat is already at 0', 'error');
                     return;
@@ -1030,11 +1152,30 @@
                 
                 currentGame.playerStats[selectedPlayer][statType]--;
                 const statCount = currentGame.playerStats[selectedPlayer][statType];
+                const stats = currentGame.playerStats[selectedPlayer];
+                const points = calculatePoints(stats);
                 
-                targetButton.textContent = `- ${statCount} (${currentHalf}H)`;
+                targetButton.textContent = `- ${statCount} (${getPeriodLabel()})`;
                 targetButton.classList.add('flash');
                 
-                const totalStats = Object.values(currentGame.playerStats[selectedPlayer]).reduce((sum, val) => sum + val, 0);
+                const statsSummary = [];
+                if (stats.goals > 0) statsSummary.push(`${stats.goals}G`);
+                if (stats.assists > 0) statsSummary.push(`${stats.assists}A`);
+                if (stats.shotsOnGoal > 0) statsSummary.push(`${stats.shotsOnGoal}SOG`);
+                if (stats.shots > 0) statsSummary.push(`${stats.shots}SH`);
+                if (stats.groundBalls > 0) statsSummary.push(`${stats.groundBalls}GB`);
+                if (stats.blockedShots > 0) statsSummary.push(`${stats.blockedShots}BL`);
+                if (stats.causedTurnovers > 0) statsSummary.push(`${stats.causedTurnovers}CT`);
+                if (stats.turnovers > 0) statsSummary.push(`${stats.turnovers}TO`);
+                if (stats.passesComplete > 0) statsSummary.push(`${stats.passesComplete}P✓`);
+                if (stats.passesIncomplete > 0) statsSummary.push(`${stats.passesIncomplete}P✗`);
+                if (stats.faceoffsLost > 0) statsSummary.push(`${stats.faceoffsLost}FL`);
+                if (stats.faceoffsWon > 0) statsSummary.push(`${stats.faceoffsWon}FW`);
+                if (stats.fouls > 0) statsSummary.push(`${stats.fouls}F`);
+                if (stats.saves > 0) statsSummary.push(`${stats.saves}S`);
+                if (stats.goalsAllowed > 0) statsSummary.push(`${stats.goalsAllowed}GA`);
+                const detailedStats = statsSummary.length > 0 ? statsSummary.join(', ') : 'No actions recorded yet';
+                
                 document.getElementById('selected-player').innerHTML = `
                     <div style="font-size: 16px; font-weight: 600;">Selected: #${player.jersey} ${player.name}</div>
                     <div style="color: #dc2626; font-weight: bold;">- ${originalText} removed! (${statCount} remaining)</div>
@@ -1045,19 +1186,38 @@
                     targetButton.classList.remove('flash');
                     document.getElementById('selected-player').innerHTML = `
                         <div style="font-size: 16px; font-weight: 600;">Selected: #${player.jersey} ${player.name}</div>
-                        <div style="font-size: 12px; color: #666; margin-top: 5px;">Current game: ${totalStats} actions recorded</div>
+                        <div style="font-size: 14px; color: #b91c1c; margin-top: 5px; font-weight: 600;">${points} Goals</div>
+                        <div style="font-size: 11px; color: #666; margin-top: 5px; line-height: 1.5;">${detailedStats}</div>
                     `;
                 }, 2000);
                 
             } else {
-                // Normal add mode
                 currentGame.playerStats[selectedPlayer][statType]++;
                 const statCount = currentGame.playerStats[selectedPlayer][statType];
+                const stats = currentGame.playerStats[selectedPlayer];
+                const points = calculatePoints(stats);
                 
-                targetButton.textContent = `✓ ${statCount} (${currentHalf}H)`;
+                targetButton.textContent = `✓ ${statCount} (${getPeriodLabel()})`;
                 targetButton.classList.add('flash');
                 
-                const totalStats = Object.values(currentGame.playerStats[selectedPlayer]).reduce((sum, val) => sum + val, 0);
+                const statsSummary = [];
+                if (stats.goals > 0) statsSummary.push(`${stats.goals}G`);
+                if (stats.assists > 0) statsSummary.push(`${stats.assists}A`);
+                if (stats.shotsOnGoal > 0) statsSummary.push(`${stats.shotsOnGoal}SOG`);
+                if (stats.shots > 0) statsSummary.push(`${stats.shots}SH`);
+                if (stats.groundBalls > 0) statsSummary.push(`${stats.groundBalls}GB`);
+                if (stats.blockedShots > 0) statsSummary.push(`${stats.blockedShots}BL`);
+                if (stats.causedTurnovers > 0) statsSummary.push(`${stats.causedTurnovers}CT`);
+                if (stats.turnovers > 0) statsSummary.push(`${stats.turnovers}TO`);
+                if (stats.passesComplete > 0) statsSummary.push(`${stats.passesComplete}P✓`);
+                if (stats.passesIncomplete > 0) statsSummary.push(`${stats.passesIncomplete}P✗`);
+                if (stats.faceoffsLost > 0) statsSummary.push(`${stats.faceoffsLost}FL`);
+                if (stats.faceoffsWon > 0) statsSummary.push(`${stats.faceoffsWon}FW`);
+                if (stats.fouls > 0) statsSummary.push(`${stats.fouls}F`);
+                if (stats.saves > 0) statsSummary.push(`${stats.saves}S`);
+                if (stats.goalsAllowed > 0) statsSummary.push(`${stats.goalsAllowed}GA`);
+                const detailedStats = statsSummary.length > 0 ? statsSummary.join(', ') : 'No actions recorded yet';
+                
                 document.getElementById('selected-player').innerHTML = `
                     <div style="font-size: 16px; font-weight: 600;">Selected: #${player.jersey} ${player.name}</div>
                     <div style="color: #16a34a; font-weight: bold;">✓ ${originalText} recorded! (${statCount} total)</div>
@@ -1068,14 +1228,19 @@
                     targetButton.classList.remove('flash');
                     document.getElementById('selected-player').innerHTML = `
                         <div style="font-size: 16px; font-weight: 600;">Selected: #${player.jersey} ${player.name}</div>
-                        <div style="font-size: 12px; color: #666; margin-top: 5px;">Current game: ${totalStats} actions recorded</div>
+                        <div style="font-size: 14px; color: #b91c1c; margin-top: 5px; font-weight: 600;">${points} Goals</div>
+                        <div style="font-size: 11px; color: #666; margin-top: 5px; line-height: 1.5;">${detailedStats}</div>
                     `;
                 }, 2000);
             }
         }
 
+        function getPeriodLabel() {
+            const labels = ['1H', '2H', 'Q1', 'Q2', 'Q3', 'Q4', 'OT'];
+            return labels[currentHalf - 1] || currentHalf + 'H';
+        }
+
         function undoLastAction() {
-            // Toggle subtract mode
             subtractMode = !subtractMode;
             updateUndoButton();
             
@@ -1097,22 +1262,25 @@
             }
         }
 
-        function showFinalScore() {
-            document.getElementById('opponent-label').textContent = currentGame.opponent;
-            document.getElementById('final-score-form').classList.add('show');
-        }
-
-        function cancelFinish() { 
-            document.getElementById('final-score-form').classList.remove('show'); 
+        function clearScores() { 
+            document.getElementById('final-our-score').value = '0';
+            document.getElementById('final-their-score').value = '0';
+            showNotification('Scores cleared');
         }
 
         function abandonGame() {
-            document.getElementById('final-score-form').style.display = 'none';
-            document.getElementById('game-active').style.display = 'none';
-            document.getElementById('game-setup').style.display = 'block';
-            currentGame = null;
-            selectedPlayer = null;
-            showNotification('Game abandoned successfully!');
+            if (confirm('Are you sure you want to abandon this game? All stats will be lost.')) {
+                currentGame = null;
+                selectedPlayer = null;
+                subtractMode = false;
+                document.getElementById('game-active').style.display = 'none';
+                document.getElementById('game-setup').style.display = 'block';
+                document.getElementById('opponent').value = '';
+                document.getElementById('final-our-score').value = '0';
+                document.getElementById('final-their-score').value = '0';
+                setTodaysDate();
+                showNotification('Game abandoned successfully!');
+            }
         }
 
         function saveGame() {
@@ -1130,6 +1298,12 @@
             saveData(); 
             resetGameState(); 
             showNotification('Game saved successfully!');
+            
+            document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('active'));
+            document.querySelectorAll('.nav-btn')[2].classList.add('active');
+            document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+            document.getElementById('stats-tab').classList.add('active');
+            displayStats();
         }
 
         function resetGameState() {
@@ -1139,7 +1313,6 @@
             lastAction = null;
             document.getElementById('game-setup').style.display = 'block'; 
             document.getElementById('game-active').style.display = 'none';
-            document.getElementById('final-score-form').style.display = 'none'; 
             document.getElementById('opponent').value = '';
             document.getElementById('final-our-score').value = '0'; 
             document.getElementById('final-their-score').value = '0'; 
@@ -1147,10 +1320,72 @@
         }
 
         function deleteGame(gameId) {
-            games = games.filter(g => g.id !== gameId);
-            saveData();
-            displayStats();
-            showNotification('Game deleted successfully!');
+            if (confirm('Are you sure you want to delete this game?')) {
+                games = games.filter(g => g.id !== gameId);
+                saveData();
+                displayStats();
+                showNotification('Game deleted successfully!');
+            }
+        }
+
+        function exportData() {
+            try {
+                const data = { players: players, games: games, exportDate: new Date().toISOString(), version: '1.0' };
+                const dataStr = JSON.stringify(data, null, 2);
+                const blob = new Blob([dataStr], { type: 'application/json' });
+                const file = new File([blob], 'lacrosse-stats-backup-' + new Date().toISOString().split('T')[0] + '.json', { type: 'application/json' });
+                
+                if (navigator.share && navigator.canShare && navigator.canShare({ files: [file] })) {
+                    navigator.share({
+                        files: [file],
+                        title: 'LAX Stats Backup',
+                        text: 'LAX stats data backup file'
+                    }).then(() => {
+                        showNotification('Data exported successfully!');
+                    }).catch((err) => {
+                        if (err.name !== 'AbortError') {
+                            showNotification('Share cancelled', 'error');
+                        }
+                    });
+                } else {
+                    navigator.clipboard.writeText(dataStr).then(() => {
+                        showNotification('Data copied to clipboard! Paste into Notes app and save.');
+                    }).catch(() => {
+                        alert('Export not supported. Data: ' + dataStr.substring(0, 100) + '... (Copy this text manually)');
+                    });
+                }
+            } catch(e) {
+                console.error(e);
+                showNotification('Export failed: ' + e.message, 'error');
+            }
+        }
+
+        function importData(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const data = JSON.parse(e.target.result);
+                    if (data.players && data.games) {
+                        if (confirm('This will replace all current data. Continue?')) {
+                            players = data.players;
+                            games = data.games;
+                            saveData();
+                            displayPlayers();
+                            displayStats();
+                            showNotification('Data imported successfully!');
+                        }
+                    } else {
+                        showNotification('Invalid backup file', 'error');
+                    }
+                } catch (error) {
+                    console.error('Import error:', error);
+                    showNotification('Error importing data', 'error');
+                }
+            };
+            reader.readAsText(file);
+            event.target.value = '';
         }
 
         function displayStats() { 
@@ -1166,36 +1401,32 @@
                 return; 
             }
             
-            let wins = 0, losses = 0, ties = 0, totalGoals = 0, totalAllowed = 0;
+            let wins = 0, losses = 0, ties = 0, totalPoints = 0, totalAllowed = 0;
             
-            // Calculate team stats
-            for (let i = 0; i < games.length; i++) {
-                const game = games[i];
+            games.forEach(game => {
                 if (game && typeof game.ourScore === 'number' && typeof game.theirScore === 'number') {
                     if (game.ourScore > game.theirScore) wins++;
                     else if (game.ourScore < game.theirScore) losses++;
                     else ties++;
                     
-                    totalGoals += game.ourScore;
+                    totalPoints += game.ourScore;
                     totalAllowed += game.theirScore;
                 }
-            }
+            });
             
-            // Calculate player stats across all games
             const playerTotals = {};
             
-            // Initialize player totals
             players.forEach(player => {
                 playerTotals[player.id] = {
                     player: player,
-                    goals: 0, assists: 0, shotOn: 0, shotOff: 0, steals: 0,
-                    passComplete: 0, passIncomplete: 0, turnover: 0, clearance: 0,
-                    dribbleSuccess: 0, dribbleMiss: 0, blocks: 0, foulCommitted: 0,
-                    saveCatch: 0, savePunch: 0, goalAllowed: 0, gamesPlayed: 0
+                    goals: 0, assists: 0, shotsOnGoal: 0, shots: 0,
+                    groundBalls: 0, blockedShots: 0, causedTurnovers: 0, turnovers: 0,
+                    passesComplete: 0, passesIncomplete: 0, faceoffsLost: 0, faceoffsWon: 0,
+                    fouls: 0, saves: 0, goalsAllowed: 0,
+                    gamesPlayed: 0
                 };
             });
             
-            // Sum up stats from all games
             games.forEach(game => {
                 if (game && game.playerStats) {
                     for (let playerId in game.playerStats) {
@@ -1203,7 +1434,6 @@
                             const gameStats = game.playerStats[playerId];
                             const totals = playerTotals[playerId];
                             
-                            // Check if player had any activity in this game
                             let hasActivity = false;
                             for (let stat in gameStats) {
                                 if (gameStats[stat] > 0) {
@@ -1214,16 +1444,16 @@
                             
                             if (hasActivity) {
                                 totals.gamesPlayed++;
+                                totals.points += calculatePoints(gameStats);
                             }
                         }
                     }
                 }
             });
             
-            // Sort players by goals + assists (top performers first)
             const sortedPlayers = Object.values(playerTotals)
                 .filter(p => p.gamesPlayed > 0)
-                .sort((a, b) => (b.goals + b.assists) - (a.goals + a.assists));
+                .sort((a, b) => b.goals - a.goals);
             
             let playerStatsHtml = '';
             if (sortedPlayers.length > 0) {
@@ -1234,41 +1464,37 @@
                             ${sortedPlayers.map(p => {
                                 const allStats = [];
                                 
-                                // Offensive stats
-                                if (p.goals > 0) allStats.push(`${p.goals}G`);
+                                if (p.goals > 0) allStats.push(`<strong>${p.goals}G</strong>`);
                                 if (p.assists > 0) allStats.push(`${p.assists}A`);
-                                if (p.shotOn > 0) allStats.push(`${p.shotOn}SO`);
-                                if (p.shotOff > 0) allStats.push(`${p.shotOff}SF`);
-                                
-                                // Passing stats
-                                if (p.passComplete > 0) allStats.push(`${p.passComplete}P✓`);
-                                if (p.passIncomplete > 0) allStats.push(`${p.passIncomplete}P✗`);
-                                
-                                // Dribbling stats
-                                if (p.dribbleSuccess > 0) allStats.push(`${p.dribbleSuccess}D✓`);
-                                if (p.dribbleMiss > 0) allStats.push(`${p.dribbleMiss}D✗`);
-                                
-                                // Defensive stats
-                                if (p.steals > 0) allStats.push(`${p.steals}ST`);
-                                if (p.clearance > 0) allStats.push(`${p.clearance}CL`);
-                                if (p.blocks > 0) allStats.push(`${p.blocks}BL`);
-                                if (p.turnover > 0) allStats.push(`${p.turnover}TO`);
-                                if (p.foulCommitted > 0) allStats.push(`${p.foulCommitted}F`);
-                                
-                                // Goalkeeper stats
-                                if (p.saveCatch > 0) allStats.push(`${p.saveCatch}SC`);
-                                if (p.savePunch > 0) allStats.push(`${p.savePunch}SP`);
-                                if (p.goalAllowed > 0) allStats.push(`${p.goalAllowed}GA`);
+                                if (p.shotsOnGoal > 0) allStats.push(`${p.shotsOnGoal}SOG`);
+                                if (p.shots > 0) allStats.push(`${p.shots}SH`);
+                                if (p.groundBalls > 0) allStats.push(`${p.groundBalls}GB`);
+                                if (p.blockedShots > 0) allStats.push(`${p.blockedShots}BL`);
+                                if (p.causedTurnovers > 0) allStats.push(`${p.causedTurnovers}CT`);
+                                if (p.turnovers > 0) allStats.push(`${p.turnovers}TO`);
+                                if (p.passesComplete > 0) allStats.push(`${p.passesComplete}P✓`);
+                                if (p.passesIncomplete > 0) allStats.push(`${p.passesIncomplete}P✗`);
+                                if (p.faceoffsLost > 0) allStats.push(`${p.faceoffsLost}FL`);
+                                if (p.faceoffsWon > 0) allStats.push(`${p.faceoffsWon}FW`);
+                                if (p.fouls > 0) allStats.push(`${p.fouls}F`);
+                                if (p.saves > 0) allStats.push(`${p.saves}S`);
+                                if (p.goalsAllowed > 0) allStats.push(`${p.goalsAllowed}GA`);
                                 
                                 const statsDisplay = allStats.length > 0 ? allStats.join(', ') : 'No stats recorded';
                                 
+                                // Calculate averages
+                                const gpg = (p.goals / p.gamesPlayed).toFixed(1);
+                                const apg = (p.assists / p.gamesPlayed).toFixed(1);
+                                const gbpg = (p.groundBalls / p.gamesPlayed).toFixed(1);
+                                const shotPct = p.shots > 0 ? ((p.goals / p.shots) * 100).toFixed(1) : '0.0';
+                                const totalPasses = p.passesComplete + p.passesIncomplete;
+                                const passPct = totalPasses > 0 ? ((p.passesComplete / totalPasses) * 100).toFixed(1) : '0.0';
+                                
                                 return `
                                     <div style="padding: 10px 0; border-bottom: 1px solid #f0f0f0;">
-                                        <div style="display: flex; justify-content: space-between; align-items: flex-start;">
-                                            <div>
-                                                <div style="font-weight: 600; font-size: 13px;">#${p.player.jersey} ${p.player.name}</div>
-                                                <div style="font-size: 11px; color: #666; margin-top: 2px;">${p.gamesPlayed} games played</div>
-                                            </div>
+                                        <div>
+                                            <div style="font-weight: 600; font-size: 13px;">#${p.player.jersey} ${p.player.name}</div>
+                                            <div style="font-size: 11px; color: #666; margin-top: 2px;">${p.gamesPlayed}G | ${gpg} GPG, ${apg} APG, ${gbpg} GBPG | Shot ${shotPct}%, Pass ${passPct}%</div>
                                         </div>
                                         <div style="font-size: 11px; color: #666; margin-top: 5px; line-height: 1.4;">
                                             ${statsDisplay}
@@ -1288,22 +1514,22 @@
             }
             
             summaryDiv.innerHTML = `
-                <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; text-align: center;">
-                    <div style="background: white; padding: 15px; border-radius: 8px;">
-                        <div style="font-size: 24px; font-weight: bold; color: #374151;">${games.length}</div>
-                        <div style="font-size: 12px; color: #666;">Games Played</div>
+                <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; text-align: center;">
+                    <div style="background: white; padding: 12px 8px; border-radius: 8px;">
+                        <div style="font-size: 20px; font-weight: bold; color: #b91c1c;">${games.length}</div>
+                        <div style="font-size: 10px; color: #666;">Games</div>
                     </div>
-                    <div style="background: white; padding: 15px; border-radius: 8px;">
-                        <div style="font-size: 16px; font-weight: bold; color: #4b5563;">${wins}-${losses}-${ties}</div>
-                        <div style="font-size: 12px; color: #666;">Record</div>
+                    <div style="background: white; padding: 12px 8px; border-radius: 8px;">
+                        <div style="font-size: 14px; font-weight: bold; color: #7f1d1d;">${wins}-${losses}-${ties}</div>
+                        <div style="font-size: 10px; color: #666;">Record</div>
                     </div>
-                    <div style="background: white; padding: 15px; border-radius: 8px;">
-                        <div style="font-size: 20px; font-weight: bold; color: #dc2626;">${totalGoals}</div>
-                        <div style="font-size: 12px; color: #666;">Goals For</div>
+                    <div style="background: white; padding: 12px 8px; border-radius: 8px;">
+                        <div style="font-size: 18px; font-weight: bold; color: #16a34a;">${totalPoints}</div>
+                        <div style="font-size: 10px; color: #666;">Pts For</div>
                     </div>
-                    <div style="background: white; padding: 15px; border-radius: 8px;">
-                        <div style="font-size: 20px; font-weight: bold; color: #6b7280;">${totalAllowed}</div>
-                        <div style="font-size: 12px; color: #666;">Goals Against</div>
+                    <div style="background: white; padding: 12px 8px; border-radius: 8px;">
+                        <div style="font-size: 18px; font-weight: bold; color: #dc2626;">${totalAllowed}</div>
+                        <div style="font-size: 10px; color: #666;">Pts Against</div>
                     </div>
                 </div>
                 ${playerStatsHtml}
@@ -1329,10 +1555,8 @@
                 const resultColor = result === 'W' ? '#16a34a' : result === 'L' ? '#dc2626' : '#d97706';
                 const resultText = result === 'T' ? 'TIE' : result;
                 
-                // Simplified player stats display
                 let playerStatsHtml = '';
                 if (game.playerStats) {
-                    let hasStats = false;
                     let playersWithStats = [];
                     
                     for (let playerId in game.playerStats) {
@@ -1340,46 +1564,36 @@
                         const stats = game.playerStats[playerId];
                         if (player && stats) {
                             const allStats = [];
+                            const goals = calculatePoints(stats);
                             
-                            // Offensive stats
-                            if (stats.goals > 0) allStats.push(`${stats.goals}G`);
+                            // Add all stats (show all, not just non-zero)
+                            if (stats.goals > 0) allStats.push(`<strong>${stats.goals}G</strong>`);
                             if (stats.assists > 0) allStats.push(`${stats.assists}A`);
-                            if (stats.shotOn > 0) allStats.push(`${stats.shotOn}SO`);
-                            if (stats.shotOff > 0) allStats.push(`${stats.shotOff}SF`);
-                            
-                            // Passing stats
-                            if (stats.passComplete > 0) allStats.push(`${stats.passComplete}P✓`);
-                            if (stats.passIncomplete > 0) allStats.push(`${stats.passIncomplete}P✗`);
-                            
-                            // Dribbling stats
-                            if (stats.dribbleSuccess > 0) allStats.push(`${stats.dribbleSuccess}D✓`);
-                            if (stats.dribbleMiss > 0) allStats.push(`${stats.dribbleMiss}D✗`);
-                            
-                            // Defensive stats
-                            if (stats.steals > 0) allStats.push(`${stats.steals}ST`);
-                            if (stats.clearance > 0) allStats.push(`${stats.clearance}CL`);
-                            if (stats.blocks > 0) allStats.push(`${stats.blocks}BL`);
-                            if (stats.turnover > 0) allStats.push(`${stats.turnover}TO`);
-                            if (stats.foulCommitted > 0) allStats.push(`${stats.foulCommitted}F`);
-                            
-                            // Goalkeeper stats
-                            if (stats.saveCatch > 0) allStats.push(`${stats.saveCatch}SC`);
-                            if (stats.savePunch > 0) allStats.push(`${stats.savePunch}SP`);
-                            if (stats.goalAllowed > 0) allStats.push(`${stats.goalAllowed}GA`);
+                            if (stats.shotsOnGoal > 0) allStats.push(`${stats.shotsOnGoal}SOG`);
+                            if (stats.shots > 0) allStats.push(`${stats.shots}SH`);
+                            if (stats.groundBalls > 0) allStats.push(`${stats.groundBalls}GB`);
+                            if (stats.blockedShots > 0) allStats.push(`${stats.blockedShots}BL`);
+                            if (stats.causedTurnovers > 0) allStats.push(`${stats.causedTurnovers}CT`);
+                            if (stats.turnovers > 0) allStats.push(`${stats.turnovers}TO`);
+                            if (stats.passesComplete > 0) allStats.push(`${stats.passesComplete}P✓`);
+                            if (stats.passesIncomplete > 0) allStats.push(`${stats.passesIncomplete}P✗`);
+                            if (stats.faceoffsLost > 0) allStats.push(`${stats.faceoffsLost}FL`);
+                            if (stats.faceoffsWon > 0) allStats.push(`${stats.faceoffsWon}FW`);
+                            if (stats.fouls > 0) allStats.push(`${stats.fouls}F`);
+                            if (stats.saves > 0) allStats.push(`${stats.saves}S`);
+                            if (stats.goalsAllowed > 0) allStats.push(`${stats.goalsAllowed}GA`);
                             
                             if (allStats.length > 0) {
-                                hasStats = true;
                                 playersWithStats.push({
                                     player: player,
                                     statsText: allStats.join(', '),
-                                    priority: (stats.goals || 0) + (stats.assists || 0) // Sort by offensive contribution
+                                    priority: goals
                                 });
                             }
                         }
                     }
                     
-                    if (hasStats) {
-                        // Sort players by offensive contribution (goals + assists)
+                    if (playersWithStats.length > 0) {
                         playersWithStats.sort((a, b) => b.priority - a.priority);
                         
                         playerStatsHtml = playersWithStats.map(p => 
@@ -1403,7 +1617,7 @@
                             </div>
                             <div style="display: flex; align-items: center; gap: 10px;">
                                 <span style="background: ${resultColor}; color: white; padding: 6px 12px; border-radius: 6px; font-size: 12px; font-weight: 700;">${resultText}</span>
-                                <button class="delete-game-btn" onclick="deleteGame(${game.id})">Delete</button>
+                                <button class="delete-game-btn" data-game-id="${game.id}">Delete</button>
                             </div>
                         </div>
                         <div style="background: white; padding: 10px; border-radius: 6px;">
@@ -1415,6 +1629,24 @@
             
             historyDiv.innerHTML = html;
         }
+        
+        // Add global event delegation for delete buttons
+        document.addEventListener('click', function(e) {
+            if (e.target && e.target.classList.contains('delete-game-btn')) {
+                e.preventDefault();
+                e.stopPropagation();
+                const gameId = parseInt(e.target.getAttribute('data-game-id'));
+                
+                customConfirm('Are you sure you want to delete this game?', function(confirmed) {
+                    if (confirmed) {
+                        games = games.filter(g => g.id !== gameId);
+                        saveData();
+                        displayStats();
+                        showNotification('Game deleted successfully!');
+                    }
+                });
+            }
+        });
     </script>
 </body>
 </html>

@@ -1,2 +1,2 @@
-# soccer-stats
-Soccer Stats for tracking kids soccer performance - version 1.0
+# Soccer-stats
+Soccer Stats for tracking youth soccer performance - version 1.0
